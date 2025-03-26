@@ -1,0 +1,201 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+/* General Page Styling */
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(to right, #a7a6d6, #2575fc);
+    
+    display: flex;
+    flex-direction: column; /* Makes content push footer down */
+    place-items: center; 
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh; /* Ensures full screen height */
+    margin: 0;
+}
+
+
+
+/* Form Container */
+#registrationForm {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    width: 550px;
+    text-align: center;
+    margin-top: 50px; 
+}
+
+/* Title */
+h2 {
+    margin-bottom: 25px;
+    font-size: 26px;
+    font-display: center;
+}
+form {
+    display: block;
+    margin-bottom: 100px; /* Adds space before footer */
+}
+
+/* Input Group (For Two Inputs in One Row) */
+.input-group {
+    display: flex;
+    justify-content: space-between;
+    gap: 40px; /* INCREASED SPACE BETWEEN COLUMNS */
+    margin-bottom: 20px; /* Space Between Rows */
+    margin-right: 40px;
+}
+
+.input-group div {
+    width: 48%;
+}
+
+/* Labels */
+label {
+    display: block;
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 8px;
+    text-align: left;
+}
+
+/* Inputs */
+input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+    outline: none;
+}
+
+input:focus {
+    border-color: #6a11cb;
+}
+
+/* File Upload Input */
+input[type="file"] {
+    border: none;
+    padding: 5px;
+}
+
+/* Register Button */
+.btn {
+    background: linear-gradient(to right, #a7a6d6, #2575fc);
+    border: none;
+    color: white;
+    padding: 12px;
+    width: 100%;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn:hover {
+    background: linear-gradient(to right, #5a0ebc, #1f66db);
+}
+*{
+	margin:0;
+	padding:0;
+	box-sizing: border-box;
+}
+.footer .container{
+  
+	max-width: 1170px;
+	margin:auto;
+    text-align: left;
+    
+  
+}
+.footer .row{
+	display: flex;
+	flex-wrap: wrap;
+}
+ul{
+	list-style: none;
+}
+.footer {
+    width: 100%;
+    background-color: #ffffff;
+    padding: 70px 0 ;  
+    text-align: left;
+    position: relative;
+   
+}
+
+
+.col{
+   width: 25%;
+   padding: 0 15px;
+}
+.col h4{
+	font-size: 18px;
+	color: black;
+	text-transform: capitalize;
+	margin-bottom: 35px;
+	font-weight: 500;
+	position: relative;
+}
+.col h4::before{
+	content: '';
+	position: absolute;
+	left:0px;
+	bottom: -10px;
+	background-color: rgba(162, 129, 223, 0.712);
+	height: 2px;
+	box-sizing: border-box;
+	width: 50px;
+}
+.col ul li:not(:last-child){
+	margin-bottom: 10px;
+}
+.col ul li a{
+	font-size: 16px;
+	text-transform: capitalize;
+	color: black;
+	text-decoration: none;
+	font-weight: 300;
+	color: black;
+	display: block;
+	transition: all 0.3s ease;
+}
+.col ul li a:hover{
+	color: rgb(142, 137, 137);
+	padding-left: 8px;
+}
+.col .social-links a{
+	display: inline-block;
+	height: 40px;
+	width: 40px;
+	background-color: rgba(102, 142, 233,.712);
+	margin:0 10px 10px 0;
+	text-align: center;
+	line-height: 40px;
+	border-radius: 50%;
+	color: white;
+	transition: all 0.5s ease;
+}
+.col .social-links a:hover {
+    background: linear-gradient(to right, #a7a6d6, #2575fc); /* Correct way to apply a gradient */
+    -webkit-background-clip: text; /* Clips the gradient to the text */
+    background-clip: text;
+    color: transparent; /* Makes the text take the gradient color */
+}
+
+ 
+
+.bottom-bar {
+    background: linear-gradient(to right, #a7a6d6, #2575fc);
+    text-align: center;
+    font-size: 15px;
+    width: 100%;
+    padding:15px;
+    margin-top: auto; 
+    
+  
+}
+
+
+
+

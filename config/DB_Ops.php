@@ -2,7 +2,7 @@
 
 $servername = "localhost";
 $username = "root";
-$password = "12345678";
+$password = "";
 $database = "my_app";
 
 // Create connection

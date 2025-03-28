@@ -9,7 +9,7 @@
 <body>
 <?php include 'templates/header.php'?> 
     <div class="container">
-        <form id="registrationForm">
+        <form id="registrationForm", method="post" enctype="multipart/form-data" action="Config/DB_Ops.php">
             <h2>Registration</h2>
 
             <div class="input-group">

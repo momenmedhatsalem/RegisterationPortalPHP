@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registration</title>
-    <link rel="stylesheet" href="public/assets/css/styles.css">
+    <link rel="stylesheet" href="public/assets/css/style.css">
 </head>
 <body>
 <?php include 'templates/header.php'?> 
@@ -73,92 +73,3 @@
 </body>
 </html>
 <style>
-/* General Page Styling */
-body {
-    font-family: Arial, sans-serif;
-    background: linear-gradient(to right, #a7a6d6, #2575fc);
-    
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-}
-
-/* Form Container */
-.container {
-    background: white;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    width: 550px;
-    text-align: center;
-}
-
-/* Title */
-h2 {
-    margin-bottom: 25px;
-    font-size: 26px;
-    font-display: center;
-}
-
-/* Input Group (For Two Inputs in One Row) */
-.input-group {
-    display: flex;
-    justify-content: space-between;
-    gap: 40px; /* INCREASED SPACE BETWEEN COLUMNS */
-    margin-bottom: 20px; /* Space Between Rows */
-    margin-right: 40px;
-}
-
-.input-group div {
-    width: 48%;
-}
-
-/* Labels */
-label {
-    display: block;
-    font-size: 14px;
-    font-weight: bold;
-    margin-bottom: 8px;
-    text-align: left;
-}
-
-/* Inputs */
-input {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 14px;
-    outline: none;
-}
-
-input:focus {
-    border-color: #6a11cb;
-}
-
-/* File Upload Input */
-input[type="file"] {
-    border: none;
-    padding: 5px;
-}
-
-/* Register Button */
-.btn {
-    background: linear-gradient(to right, #a7a6d6, #2575fc);
-    border: none;
-    color: white;
-    padding: 12px;
-    width: 100%;
-    font-size: 16px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-.btn:hover {
-    background: linear-gradient(to right, #5a0ebc, #1f66db);
-}
-
-</style>

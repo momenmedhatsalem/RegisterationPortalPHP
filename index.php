@@ -8,7 +8,7 @@
 </head>
 <body>
     <div class="container">
-        <form id="registrationForm">
+        <form id="registrationForm" action="upload.php" method="POST" enctype="multipart/form-data">
             <h2>Registration</h2>
 
             <div class="input-group">

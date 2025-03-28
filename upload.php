@@ -1,12 +1,14 @@
 <?php
 // Include the database connection file
-require 'db_connection.php';
+require 'config/DB_Ops.php'; // Ensure correct path
 
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["file"])) {
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["user_image"])) {
     $uploadDir = "uploads/users/";  // Directory to store images
-    $fileName = basename($_FILES["file"]["name"]);  // Get the original file name
-    $fileTmpName = $_FILES["file"]["tmp_name"];
-    $fileExt = strtolower(pathinfo($fileName, PATHINFO_EXTENSION)); // Extract file extension
+
+    // Extract file info
+    $fileName = basename($_FILES["user_image"]["name"]);
+    $fileTmpName = $_FILES["user_image"]["tmp_name"];
+    $fileExt = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
 
     // Allowed extensions
     $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif'];
@@ -21,8 +23,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["file"])) {
         mkdir($uploadDir, 0777, true);
     }
 
-    // Generate a unique file name to avoid overwriting
-    $newFileName = uniqid('user_', true) . '.' . $fileExt;
+    // Remove special characters from filename (sanitize)
+    $originalFileName = pathinfo($fileName, PATHINFO_FILENAME); // Get filename without extension
+    $originalFileName = preg_replace('/[^a-zA-Z0-9_-]/', '_', $originalFileName); // Sanitize
+
+    // Hardcoded user ID
+    $userId = 1;
+
+    // Generate a unique key
+    $uniqueKey = uniqid();
+
+    // Create final filename: originalFilename_userId_uniqueKey.ext
+    $newFileName = "{$originalFileName}_{$userId}_{$uniqueKey}.{$fileExt}";
     $filePath = $uploadDir . $newFileName;
 
     // Move file to the upload directory
@@ -34,11 +46,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["file"])) {
         if ($stmt->execute()) {
             echo "File uploaded successfully!";
         } else {
-            echo "Error uploading file: " . $stmt->error;
+            echo "Error updating database: " . $stmt->error;
         }
         $stmt->close();
     } else {
         echo "Error moving the uploaded file.";
     }
 }
-?>

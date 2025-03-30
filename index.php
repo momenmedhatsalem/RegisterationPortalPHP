@@ -71,6 +71,7 @@
 <script src="script.js"></script>
 <script>
     function submitForm(event) {
+        //to prevent the form from reloading after submission
         event.preventDefault();
 
         var xmlHttp = new XMLHttpRequest();
@@ -94,9 +95,8 @@
             if (this.readyState == 4 && this.status === 200) {
                 //document.getElementById('responseDiv').innerHTML = this.responseText;
                 alert(this.responseText);
-            } /*else {
-                alert('An error occurred: ' + this.status + ' ' + this.readyState);
-            }*/
+                //TODO: handle the response text and display it in the appropriate parts of the form
+            }
         };
     }    
 </script>

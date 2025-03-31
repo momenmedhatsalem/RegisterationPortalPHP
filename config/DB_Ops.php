@@ -48,6 +48,10 @@
 
             if ($shouldStoreIn_db)
             {
+                //secure the password
+                $password = password_hash($password, PASSWORD_DEFAULT);
+
+                //insert the input in the DB
                 $servername = "localhost";
                 $db_username = "root";
                 $db_password ="";

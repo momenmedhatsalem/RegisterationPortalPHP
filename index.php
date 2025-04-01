@@ -9,7 +9,7 @@
 <body>
 <?php include 'templates/header.php'?> 
     <div class="container">
-        <form id="registrationForm">
+        <form id="registrationForm" method="post" enctype="multipart/form-data" onsubmit="return submitForm(event)">
             <h2>Registration</h2>
 
             <div class="input-group">
@@ -66,10 +66,39 @@
             <button type="submit" class="btn">Register</button>
         </form>
     </div>
+<?php include 'templates/footer.php'?>
 
-    <script src="script.js"></script>
-    
-<?php include 'templates/footer.php'?> 
+<script src="script.js"></script>
+<script>
+    function submitForm(event) {
+        //to prevent the form from reloading after submission
+        event.preventDefault();
+
+        var xmlHttp = new XMLHttpRequest();
+        xmlHttp.open('POST', 'config/DB_Ops.php', true);
+        //xmlHttp.setRequestHeader('Content-Type', 'multipart/form-data');
+
+        var formData = new FormData(document.getElementById('registrationForm'));
+
+        // Convert FormData to URL-encoded string
+        /*var data = '';
+        formData.forEach(function(value, key) {
+            data += encodeURIComponent(key) + '=' + encodeURIComponent(value) + '&';
+        });
+        data.slice(0, -1);*/
+
+        // Send the request with the form data in the body
+        xmlHttp.send(formData);
+        
+        // Handle response from the server
+        xmlHttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status === 200) {
+                //document.getElementById('responseDiv').innerHTML = this.responseText;
+                alert(this.responseText);
+                //TODO: handle the response text and display it in the appropriate parts of the form
+            }
+        };
+    }    
+</script>
 </body>
 </html>
-<style>

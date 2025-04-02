@@ -248,6 +248,12 @@ function validate_password($password)
         return false;
     }
 
+    // Check for any whitespaces
+    else if (preg_match("/\s+/", $password)) {
+        $errMsgs["password"] = "Password must not contain any whitespaces";
+        return false;
+    }
+    
     // Check if password contains at least 1 number
     if (!preg_match('/[0-9]/', $password)) {
         $errMsgs["password"] = "Password must contain at least 1 number";
@@ -255,7 +261,7 @@ function validate_password($password)
     }
 
     // Check if password contains at least 1 special character
-    if (!preg_match('/[^a-zA-Z0-9]/', $password)) {
+    if (!preg_match('/[^a-zA-Z0-9\s]/', $password)) {
         $errMsgs["password"] = "Password must contain at least 1 special character";
         return false;
     }

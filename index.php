@@ -115,7 +115,7 @@
                     let isValid = true;
                     let errorMessage = '';
 
-                    // Check length
+                    // Check password length
                     if (password.length < 8) {
                         isValid = false;
                         errorMessage = 'Password must be at least 8 characters long';

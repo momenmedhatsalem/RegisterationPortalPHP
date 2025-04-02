@@ -238,16 +238,43 @@
         }
     }
 
-    function validate_password ($password) {
-        //TODO
-        return true;
+function validate_password($password)
+{
+    global $errMsgs;
+
+    // Check if password is at least 8 characters long
+    if (strlen($password) < 8) {
+        $errMsgs["password"] = "Password must be at least 8 characters long";
+        return false;
     }
 
-    function validate_confirmPassword ($confirmPassword) {
-        return true;
-        //TODO
+    // Check if password contains at least 1 number
+    if (!preg_match('/[0-9]/', $password)) {
+        $errMsgs["password"] = "Password must contain at least 1 number";
+        return false;
     }
 
+    // Check if password contains at least 1 special character
+    if (!preg_match('/[^a-zA-Z0-9]/', $password)) {
+        $errMsgs["password"] = "Password must contain at least 1 special character";
+        return false;
+    }
+
+    return true;
+}
+
+function validate_confirmPassword($confirmPassword)
+{
+    global $errMsgs;
+
+    // Check if passwords match
+    if ($confirmPassword !== $_POST["password"]) {
+        $errMsgs["confirm_password"] = "Passwords do not match";
+        return false;
+    }
+
+    return true;
+}
     function check_uniqueness ($attribute, $value) {
         //TODO
         return true;

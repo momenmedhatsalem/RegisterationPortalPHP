@@ -95,6 +95,21 @@ input[type="file"] {
 .btn:hover {
     background: linear-gradient(to right, #5a0ebc, #1f66db);
 }
+.error-msg {
+    color: red;
+    font-size: 12px;
+    margin-top: 5px;
+    display: none; /*  hidden */
+}
+
+.success-msg {
+    color: green;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 15px;
+    display: none; /* hidden */
+}
 *{
 	margin:0;
 	padding:0;

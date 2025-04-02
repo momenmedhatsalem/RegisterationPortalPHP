@@ -195,3 +195,22 @@ ul{
     
   
 }
+
+
+.invalid {
+    border: 2px solid #ff6b6b !important;
+}
+
+.error-message {
+    color: #ff6b6b;
+    font-size: 12px;
+    display: block;
+    margin-top: 5px;
+}
+
+.password-hint {
+    font-size: 10px;
+    color: rgba(0, 0, 0, 0.5);
+    display: block;
+    margin-top: 3px;
+}

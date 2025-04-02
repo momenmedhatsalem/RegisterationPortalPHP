@@ -110,95 +110,95 @@
                 passwordInput.addEventListener('input', validatePassword);
                 confirmPasswordInput.addEventListener('input', validateConfirmPassword);
 
-                // function validatePassword() {
-                //     const password = passwordInput.value;
-                //     let isValid = true;
-                //     let errorMessage = '';
+                function validatePassword() {
+                    const password = passwordInput.value;
+                    let isValid = true;
+                    let errorMessage = '';
 
-                //     // Check length
-                //     if (password.length < 8) {
-                //         isValid = false;
-                //         errorMessage = 'Password must be at least 8 characters long';
-                //     }
-                //     // Check for number
-                //     else if (!/[0-9]/.test(password)) {
-                //         isValid = false;
-                //         errorMessage = 'Password must contain at least 1 number';
-                //     }
-                //     // Check for special character
-                //     else if (!/[^a-zA-Z0-9]/.test(password)) {
-                //         isValid = false;
-                //         errorMessage = 'Password must contain at least 1 special character';
-                //     }
+                    // Check length
+                    if (password.length < 8) {
+                        isValid = false;
+                        errorMessage = 'Password must be at least 8 characters long';
+                    }
+                    // Check for number
+                    else if (!/[0-9]/.test(password)) {
+                        isValid = false;
+                        errorMessage = 'Password must contain at least 1 number';
+                    }
+                    // Check for special character
+                    else if (!/[^a-zA-Z0-9]/.test(password)) {
+                        isValid = false;
+                        errorMessage = 'Password must contain at least 1 special character';
+                    }
 
-                //     // Apply validation styles
-                //     if (!isValid) {
-                //         passwordInput.style.border = '2px solid #ff6b6b';
+                    // Apply validation styles
+                    if (!isValid) {
+                        passwordInput.style.border = '2px solid #ff6b6b';
 
-                //         // Create or update error message
-                //         let errorElement = document.getElementById('password-error');
-                //         if (!errorElement) {
-                //             errorElement = document.createElement('span');
-                //             errorElement.id = 'password-error';
-                //             errorElement.style.color = '#ff6b6b';
-                //             errorElement.style.fontSize = '12px';
-                //             errorElement.style.display = 'block';
-                //             errorElement.style.marginTop = '5px';
-                //             passwordInput.parentNode.appendChild(errorElement);
-                //         }
-                //         errorElement.textContent = errorMessage;
-                //     } else {
-                //         passwordInput.style.border = '1px solid #ccc';
+                        // Create or update error message
+                        let errorElement = document.getElementById('password-error');
+                        if (!errorElement) {
+                            errorElement = document.createElement('span');
+                            errorElement.id = 'password-error';
+                            errorElement.style.color = '#ff6b6b';
+                            errorElement.style.fontSize = '12px';
+                            errorElement.style.display = 'block';
+                            errorElement.style.marginTop = '5px';
+                            passwordInput.parentNode.appendChild(errorElement);
+                        }
+                        errorElement.textContent = errorMessage;
+                    } else {
+                        passwordInput.style.border = '1px solid #ccc';
 
-                //         // Remove error message if it exists
-                //         const errorElement = document.getElementById('password-error');
-                //         if (errorElement) {
-                //             errorElement.remove();
-                //         }
-                //     }
+                        // Remove error message if it exists
+                        const errorElement = document.getElementById('password-error');
+                        if (errorElement) {
+                            errorElement.remove();
+                        }
+                    }
 
-                //     // Always check confirm password when password changes
-                //     if (confirmPasswordInput.value) {
-                //         validateConfirmPassword();
-                //     }
+                    // Always check confirm password when password changes
+                    if (confirmPasswordInput.value) {
+                        validateConfirmPassword();
+                    }
 
-                //     return isValid;
-                // }
+                    return isValid;
+                }
 
-                // function validateConfirmPassword() {
-                //     const password = passwordInput.value;
-                //     const confirmPassword = confirmPasswordInput.value;
-                //     let isValid = true;
+                function validateConfirmPassword() {
+                    const password = passwordInput.value;
+                    const confirmPassword = confirmPasswordInput.value;
+                    let isValid = true;
 
-                //     // Check if passwords match
-                //     if (password !== confirmPassword) {
-                //         isValid = false;
-                //         confirmPasswordInput.style.border = '2px solid #ff6b6b';
+                    // Check if passwords match
+                    if (password !== confirmPassword) {
+                        isValid = false;
+                        confirmPasswordInput.style.border = '2px solid #ff6b6b';
 
-                //         // Create or update error message
-                //         let errorElement = document.getElementById('confirm-password-error');
-                //         if (!errorElement) {
-                //             errorElement = document.createElement('span');
-                //             errorElement.id = 'confirm-password-error';
-                //             errorElement.style.color = '#ff6b6b';
-                //             errorElement.style.fontSize = '12px';
-                //             errorElement.style.display = 'block';
-                //             errorElement.style.marginTop = '5px';
-                //             confirmPasswordInput.parentNode.appendChild(errorElement);
-                //         }
-                //         errorElement.textContent = 'Passwords do not match';
-                //     } else {
-                //         confirmPasswordInput.style.border = '1px solid #ccc';
+                        // Create or update error message
+                        let errorElement = document.getElementById('confirm-password-error');
+                        if (!errorElement) {
+                            errorElement = document.createElement('span');
+                            errorElement.id = 'confirm-password-error';
+                            errorElement.style.color = '#ff6b6b';
+                            errorElement.style.fontSize = '12px';
+                            errorElement.style.display = 'block';
+                            errorElement.style.marginTop = '5px';
+                            confirmPasswordInput.parentNode.appendChild(errorElement);
+                        }
+                        errorElement.textContent = 'Passwords do not match';
+                    } else {
+                        confirmPasswordInput.style.border = '1px solid #ccc';
 
-                //         // Remove error message if it exists
-                //         const errorElement = document.getElementById('confirm-password-error');
-                //         if (errorElement) {
-                //             errorElement.remove();
-                //         }
-                //     }
+                        // Remove error message if it exists
+                        const errorElement = document.getElementById('confirm-password-error');
+                        if (errorElement) {
+                            errorElement.remove();
+                        }
+                    }
 
-                //     return isValid;
-                // }
+                    return isValid;
+                }
 
                 // Add form validation before submit
                 const form = document.getElementById('registrationForm');

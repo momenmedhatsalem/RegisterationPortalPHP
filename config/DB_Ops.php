@@ -166,7 +166,7 @@
             }
             return true;
         } else {
-            $errMsgs["full_name"] = "Your name must contain at least one alphabetical letter and no special characters other than - . (which can't be consecutive) and space. Maximum till the name of the 5th grandparent";
+            $errMsgs["full_name"] = "Your name must contain at least one alphabetical letter and no special characters other than - . (which can't be consecutive) and spaces. Maximum till the name of the 4th grandparent";
             return false;
         }
     }

@@ -12,56 +12,67 @@
         <div class="container">
             <form id="registrationForm" method="post" enctype="multipart/form-data" onsubmit="return submitForm(event)">
                 <h2>Registration</h2>
-
+            
+            <div id="success-msg" class="success-msg">Registration Successful!</div>
+            
                 <div class="input-group">
                     <div>
                         <label for="full_name">Full Name</label>
                         <input type="text" id="full_name" name="full_name" placeholder="Enter your full name" required>
-                    </div>
+                        <div class="error-msg">Full Name is required</div>
+                </div>
                     <div>
                         <label for="user_name">Username</label>
                         <input type="text" id="user_name" name="user_name" placeholder="Enter your username" required>
-                    </div>
+                        <div class="error-msg">Username is required</div>
+                </div>
                 </div>
 
                 <div class="input-group">
                     <div>
                         <label for="email">Email</label>
                         <input type="email" id="email" name="email" placeholder="Enter your email" required>
-                    </div>
+                        <div class="error-msg">Valid email is required</div>
+                </div>
                     <div>
                         <label for="phone">Phone Number</label>
                         <input type="tel" id="phone" name="phone" placeholder="Enter your phone number" required>
-                    </div>
+                        <div class="error-msg">Phone number is required</div>
+                </div>
                 </div>
 
                 <div class="input-group">
                     <div>
                         <label for="whatsapp">WhatsApp Number</label>
                         <input type="tel" id="whatsapp" name="whatsapp" placeholder="Enter your WhatsApp number" required>
-                    </div>
+                        <div class="error-msg">WhatsApp number is required</div>
+                </div>
                     <div>
                         <label for="address">Address</label>
                         <input type="text" id="address" name="address" placeholder="Enter your address" required>
-                    </div>
+                        <div class="error-msg">Address is required</div>
+                </div>
                 </div>
                 <div class="input-group">
                     <div>
                         <label for="password">Password</label>
                         <input type="password" id="password" name="password" placeholder="Enter your password" required>
-                        <small style="font-size: 10px; color: rgba(0, 0, 0, 0.5); display: block; margin-top: 3px; text-align: left;">Password must be at least 8 characters with at least 1 number and 1 special character</small>
-                    </div>
+                        <small style="font-size: 10px; color: rgba(0, 0, 0, 0.5); display: block; margin-top: 3px; text-align: left;">Password must be at least 8 characters with at least 1 number and 1 special character, and must not contain any white spaces</small>
+                        <div class="error-msg">Password is required</div>
+                </div>
                     <div>
                         <label for="confirm_password">Confirm Password</label>
                         <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm your password" required>
-                    </div>
+                        <div class="error-msg">Passwords must match</div>
+                </div>
                 </div>
 
                 <div class="input-group">
                     <div>
                         <label for="user_image">Upload Image</label>
                         <input type="file" id="user_image" name="user_image" accept="image/*" required>
-                    </div>
+                        <div class="error-msg">Please upload an image</div>
+                </div>
                 </div>
 
                 <button type="submit" class="btn">Register</button>
@@ -225,6 +236,12 @@
                 }
 
             );
+
+            //Success Message div handling
+            document.getElementById("registrationForm").addEventListener("submit", function(event) {
+                event.preventDefault(); 
+                document.getElementById("success-msg").style.display = "block"; 
+            });
         </script>
     </body>
 </html>

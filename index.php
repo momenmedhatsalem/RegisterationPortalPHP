@@ -83,3 +83,12 @@
 <?php include 'templates/footer.php'?> 
 </body>
 </html>
+<js>
+    <script>
+        document.getElementById("registrationForm").addEventListener("submit", function(event) {
+            event.preventDefault(); 
+            document.getElementById("success-msg").style.display = "block"; 
+        });
+        </script>
+        
+</js>

@@ -1,4 +1,6 @@
 <?php
+
+
     $fullName = $userName = $email = $number = $wpNumber = $address = $password = $confirmPassword = "";
     
     $errMsgs["full_name"] = "";
@@ -10,6 +12,9 @@
     $errMsgs["password"] = "";
     $errMsgs["confirm_password"] = "";
     $errMsgs["user_image"] = "";
+  
+    
+    
 
     if ($_SERVER['REQUEST_METHOD'] === "POST")
     {
@@ -119,7 +124,7 @@
             echo json_encode($errMsgs);
         }
     }
-
+    
     function basicValidation ($inputName, &$inputValue){
         if (checkRequired($inputName))
         {
@@ -171,62 +176,41 @@
         }
     }
 
-    function validate_username ($userName) {
+
+    function validate_email($email) {
         global $errMsgs;
-        if (preg_match("/^[^\s]+$/", $userName))
-        {
-            $unique = check_uniqueness('user_name', $userName);
-            if (!$unique)
-            {
-                $errMsgs["user_name"] = "This username is already taken. Please write another one";
-                return false;
-            }
+        if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            // $unique = check_uniqueness('email', $email);
+            // if (!$unique) {
+            //     $errMsgs["email"] = "<span style='color: red; font-size: 11px;'>This email address is already used by another account. Please use another email address.</span>";
+            //     return false;
+            // }
             return true;
         } else {
-            $errMsgs["user_name"] = "usernames cannot contain any whitespaces or backslashes";
+            $errMsgs["email"] = "<span style='color: red; font-size: 11px;'>Please enter a valid email.</span>";
             return false;
         }
     }
-
-    function validate_email ($email) {
-        global $errMsgs;
-        if (filter_var($email, FILTER_VALIDATE_EMAIL))
-        {
-            $unique = check_uniqueness('email', $email);
-            if (!$unique)
-            {
-                $errMsgs["email"] = "This email address is already used by another account. Please write another email address";
-                return false;
-            }
-            return true;
-        } else {
-            $errMsgs["email"] = "please enter a valid email";
-            return false;
-        }
-    }
-
-    function validate_phoneNumber (&$phoneNumber) {
+    
+    function validate_phoneNumber(&$phoneNumber) {
         global $errMsgs;
         if (preg_match("/^\+?[0-9]{7,15}$/", $phoneNumber)) {
-            if (!$phoneNumber[0] == '+')
-            {
-                $char = "+";
-                $phoneNumber = $char . $phoneNumber; 
+            if ($phoneNumber[0] !== '+') {
+                $phoneNumber = "+" . $phoneNumber; 
             }
-
-            $unique = check_uniqueness('phone', $phoneNumber);
-            if (!$unique)
-            {
-                $errMsgs["phone"] = "This phone number is already used by another account. Please write another number";
-                return false;
-            }
+    
+            // $unique = check_uniqueness('phone', $phoneNumber);
+            // if (!$unique) {
+            //     $errMsgs["phone"] = "<span style='color: red; font-size: 11px;'>This phone number is already used by another account. Please enter a different number.</span>";
+            //     return false;
+            // }
             return true;
         } else {
-            $errMsgs["phone"] = "Phone number must contain only digits, and may start with a +. It must be between 7 to 15 digits";
+            $errMsgs["phone"] = "<span style='color: red; font-size: 11px;'>Phone number must contain only digits, may start with a '+', and must be between 7 to 15 digits.</span>";
             return false;
         }
     }
-
+    
     function validate_whatsappPhoneNumber ($WP_phoneNumber) {
         //TODO: Integrate with the Wp API
         global $errMsgs;
@@ -247,9 +231,29 @@
         return true;
         //TODO
     }
-
-    function check_uniqueness ($attribute, $value) {
-        //TODO
+    
+    function validate_username($userName) {
+        global $errMsgs;
+        if (!preg_match("/^\S+$/", $userName)) { // No spaces allowed
+            $errMsgs["user_name"] = "Usernames cannot contain any whitespaces or backslashes.";
+            return false;
+        }
+    
+        // if (!check_uniqueness('user_name', $userName)) {
+        //     $errMsgs["user_name"] = "This username is already taken.";
+        //     return false;
+        // }
+    
         return true;
     }
+
+
+
+  
+    
+
+    
+    
+    
+    
 ?>

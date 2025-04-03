@@ -47,9 +47,9 @@
             $shouldStoreIn_db = validate_fullName($fullName) && $shouldStoreIn_db;
             $shouldStoreIn_db = validate_username($userName) && $shouldStoreIn_db;
             $shouldStoreIn_db = validate_email($email) && $shouldStoreIn_db;
-            $shouldStoreIn_db = validate_phoneNumber("phone", $number, true) && $shouldStoreIn_db;
+            $shouldStoreIn_db = validate_phoneNumber("phone", $number/*, true*/) && $shouldStoreIn_db;
             //TODO: Check if further whatsapp number validation is needed
-            $shouldStoreIn_db = validate_phoneNumber("whatsapp", $wpNumber, false) && $shouldStoreIn_db;
+            $shouldStoreIn_db = validate_phoneNumber("whatsapp", $wpNumber/*, false*/) && $shouldStoreIn_db;
             $shouldStoreIn_db = validate_password($password) && $shouldStoreIn_db;
             $shouldStoreIn_db = validate_confirmPassword($confirmPassword) && $shouldStoreIn_db;
             //TODO: Image validation
@@ -170,12 +170,12 @@
         global $errMsgs;
         if (preg_match("/^[^\s]+$/", $userName))
         {
-            $unique = check_uniqueness('user_name', $userName);
-            if (!$unique)
-            {
-                $errMsgs["user_name"] = "This username is already taken. Please write another one";
-                return false;
-            }
+            // $unique = check_uniqueness('user_name', $userName);
+            // if (!$unique)
+            // {
+            //     $errMsgs["user_name"] = "This username is already taken. Please write another one";
+            //     return false;
+            // }
             return true;
         } else {
             $errMsgs["user_name"] = "usernames cannot contain any whitespaces or backslashes";
@@ -187,12 +187,12 @@
         global $errMsgs;
         if (filter_var($email, FILTER_VALIDATE_EMAIL))
         {
-            $unique = check_uniqueness('email', $email);
-            if (!$unique)
-            {
-                $errMsgs["email"] = "This email address is already used by another account. Please write another email address";
-                return false;
-            }
+            // $unique = check_uniqueness('email', $email);
+            // if (!$unique)
+            // {
+            //     $errMsgs["email"] = "This email address is already used by another account. Please write another email address";
+            //     return false;
+            // }
             return true;
         } else {
             $errMsgs["email"] = "please enter a valid email";
@@ -200,7 +200,7 @@
         }
     }
 
-    function validate_phoneNumber ($fieldName, &$phoneNumber, $shouldCheckUniqueness) {
+    function validate_phoneNumber ($fieldName, &$phoneNumber/*, $shouldCheckUniqueness*/) {
         global $errMsgs;
         if (preg_match("/^\+?[0-9]{7,15}$/", $phoneNumber)) {
             if (!$phoneNumber[0] == '+')
@@ -209,16 +209,16 @@
                 $phoneNumber = $char . $phoneNumber; 
             }
 
-            if ($shouldCheckUniqueness)
-            {
-                $unique = check_uniqueness('phone', $phoneNumber);
-                if (!$unique)
-                {
-                    $errMsgs[$fieldName] = "This phone number is already used by another account. Please write another number";
-                    return false;
-                }
-                return true;
-            }
+            // if ($shouldCheckUniqueness)
+            // {
+            //     $unique = check_uniqueness('phone', $phoneNumber);
+            //     if (!$unique)
+            //     {
+            //         $errMsgs[$fieldName] = "This phone number is already used by another account. Please write another number";
+            //         return false;
+            //     }
+            //     return true;
+            // }
             return true;
 
         } else {
@@ -270,24 +270,25 @@ function validate_confirmPassword($confirmPassword)
 
     return true;
 }
-    function check_uniqueness ($field, $value) {
-        global $servername, $db_username, $db_password, $db_name, $tableName;
 
-        $connect = mysqli_connect($servername, $db_username, $db_password, $db_name)
-        or die ("couldn't connect to this host or database, and the error is: " . mysqli_connect_error());
+//     function check_uniqueness ($field, $value) {
+//         global $servername, $db_username, $db_password, $db_name, $tableName;
+
+//         $connect = mysqli_connect($servername, $db_username, $db_password, $db_name)
+//         or die ("couldn't connect to this host or database, and the error is: " . mysqli_connect_error());
     
-        $query = "SELECT * FROM $tableName WHERE $field = ?";
-        $stmt = mysqli_prepare($connect, $query)
-        or die ("couldn't prepare this query, and the error is: " . mysqli_error($connect));
+//         $query = "SELECT * FROM $tableName WHERE $field = ?";
+//         $stmt = mysqli_prepare($connect, $query)
+//         or die ("couldn't prepare this query, and the error is: " . mysqli_error($connect));
         
-        mysqli_stmt_bind_param($stmt, "s", $value);
-        mysqli_stmt_execute($stmt);
-        $result = mysqli_stmt_get_result($stmt);
+//         mysqli_stmt_bind_param($stmt, "s", $value);
+//         mysqli_stmt_execute($stmt);
+//         $result = mysqli_stmt_get_result($stmt);
     
-        $isAvailable = mysqli_num_rows($result) == 0; // If no record exists, it's available
-        mysqli_stmt_close($stmt);
-        mysqli_close($connect);
+//         $isAvailable = mysqli_num_rows($result) == 0; // If no record exists, it's available
+//         mysqli_stmt_close($stmt);
+//         mysqli_close($connect);
     
-        return $isAvailable;
-    }
+//         return $isAvailable;
+//     }
 ?>

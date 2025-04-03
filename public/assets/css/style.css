@@ -47,7 +47,7 @@ form {
 }
 
 .input-group div {
-    width: 48%;
+    width: 100%;
 }
 
 /* Labels */
@@ -99,6 +99,9 @@ input[type="file"] {
     color: red;
     font-size: 12px;
     margin-top: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+    text-align: center;
     display: none; /*  hidden */
 }
 

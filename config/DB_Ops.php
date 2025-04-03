@@ -62,49 +62,42 @@
                 or die ("couldn't connect to this host, and the error is: " . mysqli_connect_error());
     
                 // Check if the database exists
-                $sql = "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = '$db_name'";
-                $result = mysqli_query($conn, $sql);
-                if (mysqli_num_rows($result) <= 0) {
-                    //TODO: code to create database
-                }
-    
+                $sql = "CREATE DATABASE IF NOT EXISTS $db_name";
+                mysqli_query($conn, $sql);
+
+                //connect to the db
                 mysqli_select_db($conn, $db_name)
                 or die ("couldn't open this database, and the error is: " . mysqli_error($conn));
 
-                //TODO: Code to check if the 'users' table exists, and create it if it doesn't
-                //Use this code to create it:
-                /*CREATE TABLE users (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
-                    full_name VARCHAR(255) NOT NULL,
-                    user_name VARCHAR(100) NOT NULL UNIQUE,
-                    phone VARCHAR(20) NOT NULL UNIQUE,
-                    whatsapp_number VARCHAR(20) NULL,
-                    address TEXT NULL,
-                    password VARCHAR(255) NOT NULL, 
-                    user_image VARCHAR(500) NULL, 
-                    email VARCHAR(255) NOT NULL UNIQUE,
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-                );*/
-                
-                //Alternate code: to be deleted
-                    //user_image, before email
-                    /*$sql = "INSERT INTO " . $tableName . "(full_name, user_name, phone, whatsapp_number, address, password, email)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        
-                    $stmt = mysqli_prepare($conn, $sql);
-                    mysqli_stmt_bind_param($stmt, "ssssssss", $fullname, $userName, $number, $wpNumber, $address, $password, $email);
-                    mysqli_stmt_execute($stmt);
-        
-                    mysqli_stmt_close($stmt);*/
-                //
+                //check if the 'users' table exists, and create it if it doesn't
+                $sql = "SHOW TABLES LIKE '$tableName'";
+                $result = mysqli_query($conn, $sql);
+                if ($result->num_rows <= 0) {
+                    $sql = "CREATE TABLE users (
+                        id INT AUTO_INCREMENT PRIMARY KEY,
+                        full_name VARCHAR(255) NOT NULL,
+                        user_name VARCHAR(100) NOT NULL UNIQUE,
+                        phone VARCHAR(20) NOT NULL UNIQUE,
+                        whatsapp_number VARCHAR(20) NULL,
+                        address TEXT NULL,
+                        password VARCHAR(255) NOT NULL, 
+                        user_image VARCHAR(500) NULL, 
+                        email VARCHAR(255) NOT NULL UNIQUE,
+                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                    );";
 
+                    mysqli_query($conn, $sql);
+                }
+                
                 //TODO: Image-name insertion - handling
                 //Important note: an arbitraty image path is stored. Not the real input. To be changed later
+                //insert input into the db
                 $imagePath = "hi.png";
                 $query = "INSERT INTO $tableName (full_name, user_name, phone, whatsapp_number, address, password, user_image, email) VALUES ('$fullName', '$userName', '$number', '$wpNumber', '$address', '$password', '$imagePath', '$email')";
                 mysqli_query($conn, $query);
                 mysqli_close($conn);
 
+                //the successful response
                 echo "You have successfully registered!";
             }
             else

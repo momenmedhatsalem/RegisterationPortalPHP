@@ -36,12 +36,20 @@
             $password = $_POST["password"];
             $confirmPassword = $_POST["confirm_password"];    
 
+            //configure the db data
+            $servername = "localhost";
+            $db_username = "root";
+            $db_password ="";
+            $db_name = "registrationportal";
+            $tableName = "users";
+        
             $shouldStoreIn_db = true;
             $shouldStoreIn_db = validate_fullName($fullName) && $shouldStoreIn_db;
             $shouldStoreIn_db = validate_username($userName) && $shouldStoreIn_db;
             $shouldStoreIn_db = validate_email($email) && $shouldStoreIn_db;
-            $shouldStoreIn_db = validate_phoneNumber($number) && $shouldStoreIn_db;
-            $shouldStoreIn_db = validate_whatsappPhoneNumber($wpNumber) && $shouldStoreIn_db;
+            $shouldStoreIn_db = validate_phoneNumber("phone", $number, true) && $shouldStoreIn_db;
+            //TODO: Check if further whatsapp number validation is needed
+            $shouldStoreIn_db = validate_phoneNumber("whatsapp", $wpNumber, false) && $shouldStoreIn_db;
             $shouldStoreIn_db = validate_password($password) && $shouldStoreIn_db;
             $shouldStoreIn_db = validate_confirmPassword($confirmPassword) && $shouldStoreIn_db;
             //TODO: Image validation
@@ -51,13 +59,7 @@
                 //secure the password
                 $password = password_hash($password, PASSWORD_DEFAULT);
 
-                //insert the input in the DB
-                $servername = "localhost";
-                $db_username = "root";
-                $db_password ="";
-                $db_name = "registrationportal";
-                $tableName = "users";
-            
+                //DB-insertion section            
                 $conn = mysqli_connect($servername, $db_username, $db_password)
                 or die ("couldn't connect to this host, and the error is: " . mysqli_connect_error());
     
@@ -198,7 +200,7 @@
         }
     }
 
-    function validate_phoneNumber (&$phoneNumber) {
+    function validate_phoneNumber ($fieldName, &$phoneNumber, $shouldCheckUniqueness) {
         global $errMsgs;
         if (preg_match("/^\+?[0-9]{7,15}$/", $phoneNumber)) {
             if (!$phoneNumber[0] == '+')
@@ -207,26 +209,20 @@
                 $phoneNumber = $char . $phoneNumber; 
             }
 
-            $unique = check_uniqueness('phone', $phoneNumber);
-            if (!$unique)
+            if ($shouldCheckUniqueness)
             {
-                $errMsgs["phone"] = "This phone number is already used by another account. Please write another number";
-                return false;
+                $unique = check_uniqueness('phone', $phoneNumber);
+                if (!$unique)
+                {
+                    $errMsgs[$fieldName] = "This phone number is already used by another account. Please write another number";
+                    return false;
+                }
+                return true;
             }
             return true;
-        } else {
-            $errMsgs["phone"] = "Phone number must contain only digits, and may start with a +. It must be between 7 to 15 digits";
-            return false;
-        }
-    }
 
-    function validate_whatsappPhoneNumber ($WP_phoneNumber) {
-        //TODO: Integrate with the Wp API
-        global $errMsgs;
-        if (validate_phoneNumber($WP_phoneNumber))
-        {
-            return true;
         } else {
+            $errMsgs[$fieldName] = "Phone number must contain only digits, and may start with a +. It must be between 7 to 15 digits";
             return false;
         }
     }
@@ -274,8 +270,24 @@ function validate_confirmPassword($confirmPassword)
 
     return true;
 }
-    function check_uniqueness ($attribute, $value) {
-        //TODO
-        return true;
+    function check_uniqueness ($field, $value) {
+        global $servername, $db_username, $db_password, $db_name, $tableName;
+
+        $connect = mysqli_connect($servername, $db_username, $db_password, $db_name)
+        or die ("couldn't connect to this host or database, and the error is: " . mysqli_connect_error());
+    
+        $query = "SELECT * FROM $tableName WHERE $field = ?";
+        $stmt = mysqli_prepare($connect, $query)
+        or die ("couldn't prepare this query, and the error is: " . mysqli_error($connect));
+        
+        mysqli_stmt_bind_param($stmt, "s", $value);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
+    
+        $isAvailable = mysqli_num_rows($result) == 0; // If no record exists, it's available
+        mysqli_stmt_close($stmt);
+        mysqli_close($connect);
+    
+        return $isAvailable;
     }
 ?>

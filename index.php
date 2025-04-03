@@ -19,12 +19,12 @@
                     <div>
                         <label for="full_name">Full Name</label>
                         <input type="text" id="full_name" name="full_name" placeholder="Enter your full name" required>
-                        <div class="error-msg">Full Name is required</div>
+                        <div class="error-msg" id="full_name_err"></div>
                 </div>
                     <div>
                         <label for="user_name">Username</label>
                         <input type="text" id="user_name" name="user_name" placeholder="Enter your username" required>
-                        <div class="error-msg">Username is required</div>
+                        <div class="error-msg" id="user_name_err"></div>
                 </div>
                 </div>
 
@@ -32,12 +32,12 @@
                     <div>
                         <label for="email">Email</label>
                         <input type="email" id="email" name="email" placeholder="Enter your email" required>
-                        <div class="error-msg">Valid email is required</div>
+                        <div class="error-msg" id="email_err"></div>
                 </div>
                     <div>
                         <label for="phone">Phone Number</label>
                         <input type="tel" id="phone" name="phone" placeholder="Enter your phone number" required>
-                        <div class="error-msg">Phone number is required</div>
+                        <div class="error-msg" id="phone_err"></div>
                 </div>
                 </div>
 
@@ -45,12 +45,12 @@
                     <div>
                         <label for="whatsapp">WhatsApp Number</label>
                         <input type="tel" id="whatsapp" name="whatsapp" placeholder="Enter your WhatsApp number" required>
-                        <div class="error-msg">WhatsApp number is required</div>
+                        <div class="error-msg" id="whatsapp_err"></div>
                 </div>
                     <div>
                         <label for="address">Address</label>
                         <input type="text" id="address" name="address" placeholder="Enter your address" required>
-                        <div class="error-msg">Address is required</div>
+                        <div class="error-msg" id="address_err"></div>
                 </div>
                 </div>
                 <div class="input-group">
@@ -58,12 +58,12 @@
                         <label for="password">Password</label>
                         <input type="password" id="password" name="password" placeholder="Enter your password" required>
                         <small style="font-size: 10px; color: rgba(0, 0, 0, 0.5); display: block; margin-top: 3px; text-align: left;">Password must be at least 8 characters with at least 1 number and 1 special character, and must not contain any white spaces</small>
-                        <div class="error-msg">Password is required</div>
+                        <div class="error-msg" id="password_err"></div>
                 </div>
                     <div>
                         <label for="confirm_password">Confirm Password</label>
                         <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm your password" required>
-                        <div class="error-msg">Passwords must match</div>
+                        <div class="error-msg" id="confirm_password_err"></div>
                 </div>
                 </div>
 
@@ -71,7 +71,7 @@
                     <div>
                         <label for="user_image">Upload Image</label>
                         <input type="file" id="user_image" name="user_image" accept="image/*" required>
-                        <div class="error-msg">Please upload an image</div>
+                        <div class="error-msg" id="user_image_err"></div>
                 </div>
                 </div>
 
@@ -86,28 +86,54 @@
                 //to prevent the form from reloading after submission
                 event.preventDefault();
 
+                //set and send the request
                 var xmlHttp = new XMLHttpRequest();
                 xmlHttp.open('POST', 'config/DB_Ops.php', true);
-                //xmlHttp.setRequestHeader('Content-Type', 'multipart/form-data');
 
                 var formData = new FormData(document.getElementById('registrationForm'));
-
-                // Convert FormData to URL-encoded string
-                /*var data = '';
-                formData.forEach(function(value, key) {
-                    data += encodeURIComponent(key) + '=' + encodeURIComponent(value) + '&';
-                });
-                data.slice(0, -1);*/
-
-                // Send the request with the form data in the body
                 xmlHttp.send(formData);
 
+                //rest all the dynamic divs
+                document.getElementById("success-msg").style.display = "none";
+                document.querySelectorAll('.error-msg').forEach(element =>
+                {
+                    element.style.display = "none"; 
+                    element.innerHTML = "";
+                });
+
                 // Handle response from the server
-                xmlHttp.onreadystatechange = function() {
-                    if (this.readyState == 4 && this.status === 200) {
-                        //document.getElementById('responseDiv').innerHTML = this.responseText;
-                        alert(this.responseText);
-                        //TODO: handle the response text and display it in the appropriate parts of the form
+                xmlHttp.onreadystatechange = function()
+                {
+                    if (this.readyState == 4 && this.status === 200)
+                    {
+                        var isJson;
+                        try
+                        {
+                            var jsonResponse = JSON.parse(this.responseText);
+                            isJson = true;
+                        }
+                        catch (e)
+                        {
+                            isJson = false;
+                        }
+
+                        if (isJson)
+                        {
+                            document.querySelectorAll('.error-msg').forEach(element =>
+                            {
+                                var responseArrayKey = element.id.slice(0, -4);
+                                var elementResponse = jsonResponse[responseArrayKey];
+                                if (elementResponse !== "")
+                                {
+                                    element.style.display = "block"; 
+                                    element.innerHTML = elementResponse;
+                                }
+                            });
+                        }
+                        else
+                        {
+                            document.getElementById("success-msg").style.display = "block"; 
+                        }
                     }
                 };
             }
@@ -126,15 +152,15 @@
                         let isValid = true;
                         let errorMessage = '';
 
+                        // Check for any whitespaces
+                        if (/\s+/.test(password)) {
+                        isValid = false;
+                        errorMessage = 'Password must not contain any whitespaces';
+                        }
                         // Check password length
-                        if (password.length < 8) {
+                        else if (password.length < 8) {
                             isValid = false;
                             errorMessage = 'Password must be at least 8 characters long';
-                        }
-                        // Check for any whitespaces
-                        else if (/\s+/.test(password)) {
-                            isValid = false;
-                            errorMessage = 'Password must not contain any whitespaces';
                         }
                         // Check for number
                         else if (!/[0-9]/.test(password)) {
@@ -234,14 +260,7 @@
                         }
                     };
                 }
-
             );
-
-            //Success Message div handling
-            document.getElementById("registrationForm").addEventListener("submit", function(event) {
-                event.preventDefault(); 
-                document.getElementById("success-msg").style.display = "block"; 
-            });
         </script>
     </body>
 </html>

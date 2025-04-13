@@ -75,7 +75,7 @@
                 </div>
                 </div>
 
-                <button type="submit" id="register-btn" class="btn" disabled>Register</button>
+                <button type="submit" id="register-btn" class="btn">Register</button>
             </form>
         </div>
         <?php include 'templates/footer.php' ?>
@@ -87,22 +87,24 @@
                 //to prevent the form from reloading after submission
                 event.preventDefault();
 
-                //set and send the request
-                var xmlHttp = new XMLHttpRequest();
-                xmlHttp.open('POST', 'config/DB_Ops.php', true);
-
-                var formData = new FormData(document.getElementById('registrationForm'));
-                xmlHttp.send(formData);
-
-                //rest all the dynamic divs
+                //reset all the dynamic divs
                 document.getElementById("success-msg").style.display = "none";
                 document.querySelectorAll('.error-msg').forEach(element =>
                 {
                     element.style.display = "none"; 
                     element.innerHTML = "";
                 });
+                
+                //set and send the request to the main server page (DB_Ops.php)
+                var xmlHttp = new XMLHttpRequest();
+                xmlHttp.open('POST', 'config/DB_Ops.php', true);
 
-                // Handle response from the server
+                var formData = new FormData(document.getElementById('registrationForm'));
+                xmlHttp.send(formData);
+
+                // Handle response from DB_Ops.php
+                var isSuccessful = false;
+
                 xmlHttp.onreadystatechange = function()
                 {
                     if (this.readyState == 4 && this.status === 200)
@@ -132,6 +134,31 @@
                             });
                         }
                         else
+                        {
+                            isSuccessful = true;
+                        }
+                    }
+                };
+
+                //now, connect to upload.php, to handle the uploaded image
+                //set and send the request to upload.php
+                var xmlHttp = new XMLHttpRequest();
+                xmlHttp.open('POST', 'upload.php', true);
+                xmlHttp.send(formData);
+
+                //process the response
+                xmlHttp.onreadystatechange = function()
+                {
+                    if (this.readyState == 4 && this.status === 200)
+                    {
+                        var responseText = this.responseText;
+                        var firstWord = responseText.trim().split(" ")[0];
+
+                        if (firstWord == "Error")
+                        {
+                            document.getElementById("user_image_err").innerText = responseText;
+                        }
+                        else if (isSuccessful)
                         {
                             document.getElementById("success-msg").style.display = "block"; 
                         }

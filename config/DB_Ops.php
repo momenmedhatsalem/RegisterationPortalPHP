@@ -9,7 +9,6 @@
     $errMsgs["address"] = "";
     $errMsgs["password"] = "";
     $errMsgs["confirm_password"] = "";
-    $errMsgs["user_image"] = "";
 
     if ($_SERVER['REQUEST_METHOD'] === "POST")
     {
@@ -47,12 +46,12 @@
             $shouldStoreIn_db = validate_fullName($fullName) && $shouldStoreIn_db;
             $shouldStoreIn_db = validate_username($userName) && $shouldStoreIn_db;
             $shouldStoreIn_db = validate_email($email) && $shouldStoreIn_db;
+            //TODO: Mofigy the validate_phoneNumber fun after check uniqueness feature is completed
             $shouldStoreIn_db = validate_phoneNumber("phone", $number/*, true*/) && $shouldStoreIn_db;
             //TODO: Check if further whatsapp number validation is needed
             $shouldStoreIn_db = validate_phoneNumber("whatsapp", $wpNumber/*, false*/) && $shouldStoreIn_db;
             $shouldStoreIn_db = validate_password($password) && $shouldStoreIn_db;
             $shouldStoreIn_db = validate_confirmPassword($confirmPassword) && $shouldStoreIn_db;
-            //TODO: Image validation
 
             if ($shouldStoreIn_db)
             {
@@ -91,10 +90,9 @@
                     mysqli_query($conn, $sql);
                 }
                 
-                //TODO: Image-name insertion - handling
-                //Important note: an arbitraty image path is stored. Not the real input. To be changed later
+                //Important note: an arbitraty image path is stored, not the real input. It will be updated to the real input after it's sent to upload.php
                 //insert input into the db
-                $imagePath = "hi.png";
+                $imagePath = "dummy.png";
                 $query = "INSERT INTO $tableName (full_name, user_name, phone, whatsapp_number, address, password, user_image, email) VALUES ('$fullName', '$userName', '$number', '$wpNumber', '$address', '$password', '$imagePath', '$email')";
                 mysqli_query($conn, $query);
                 mysqli_close($conn);

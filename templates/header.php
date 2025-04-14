@@ -110,10 +110,10 @@
 
 
         .logo-container {
-            width: 22px;
-            height: 22px;
+            width: 40px;
+            height: 45px;
             position: absolute;
-            left: 15px;
+            left: 7px;
             top: 50%;
             transform: translateY(-50%);
         }
@@ -130,17 +130,10 @@
 <body>
     <header class="header">
         <div class="logo-container">
-            <img src="public/assets/img/university-logo.svg" alt="University Logo" class="logo">
+            <img src="public/assets/img/Cairo_University_crest.svg" alt="University Logo" class="logo">
         </div>
         <nav class="nav-links">
-            <div class="dropdown">
-                <a href="#">Home</a>
-                <div class="dropdown-content">
-                    <a href="#">Subpage 1</a>
-                    <a href="#">Subpage 2</a>
-                    <a href="#">Subpage 3</a>
-                </div>
-            </div>
+            <a href="#">Home</a>
             <div class="dropdown">
                 <a href="#">Our Services</a>
                 <div class="dropdown-content">

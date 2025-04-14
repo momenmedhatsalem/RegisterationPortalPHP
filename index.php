@@ -80,9 +80,10 @@
         </div>
         <?php include 'templates/footer.php' ?>
 
-        //Send request for server-side validation and insertion to DB
+
         <script src="script.js"></script>
         <script>
+                    //Send request for server-side validation and insertion to DB
             function submitForm(event) {
                 //to prevent the form from reloading after submission
                 event.preventDefault();
@@ -167,8 +168,9 @@
             }
         </script>
 
-        //Password validation section
+   
         <script>
+                 // Password validation section
             document.addEventListener('DOMContentLoaded', function() {
                     // Password validation
                     const passwordInput = document.getElementById('password');
@@ -293,7 +295,6 @@
             );
         </script>
 
-        //Checking Uniqueness handling and AJAX
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script>
             $(document).ready(function() {
@@ -319,20 +320,21 @@
                     type: "POST",
                     success: function(data) {
                         let response = JSON.parse(data);
-                        let messageSpan = $("#" + field + "-check");
+                        let messageSpan = $("#" + field + "_err");
             
                         if (response.available) {
-                            messageSpan.html("<span style='color: green; font-size: 11px;'>" + field.replace("_", " ") + " is available</span>");
-                            $("#" + field).attr("data-valid", "true"); // Mark field as valid
+                            messageSpan.html("<span style='color: green; font-size: 11px; display: block; margin-top: 3px; text-align: left;'>" + field.replace("_", " ") + " is available</span>").css("display", "block"); // <-- show it
+                            $("#" + field).attr("data-valid", "true");
                         } else {
-                            messageSpan.html("<span style='color: red; font-size: 11px;'>" + field.replace("_", " ") + " is already taken</span>");
-                            $("#" + field).attr("data-valid", "false"); // Mark field as invalid
+                             messageSpan.html("<span style='color: red; font-size: 11px;display: block; margin-top: 3px; text-align: left;'>" + field.replace("_", " ") + " is already taken</span>").css("display", "block"); // <-- show it
+                             $("#" + field).attr("data-valid", "false");
                         }
+
             
                         checkAllFields(); // Check if all fields are valid before enabling the button
                     },
                     error: function() {
-                        $("#" + field + "-check").html("<span style='color: red; font-size: 11px;'>Error checking " + field.replace("_", " ") + "</span>");
+                        $("#" + field + "-check").html("<span style='color: red; font-size: 11px; text-align: left;'>Error checking " + field.replace("_", " ") + "</span>");
                     }
                 });
             }

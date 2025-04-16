@@ -1,4 +1,18 @@
 <?php
+function getDbConnection() {
+    static $conn = null;
+    if ($conn === null) {
+        $servername = "localhost";
+        $db_username = "root";
+        $db_password = "";
+        $db_name = "registrationportal";
+
+        $conn = mysqli_connect($servername, $db_username, $db_password, $db_name)
+            or die("Couldn't connect to the database: " . mysqli_connect_error());
+    }
+    return $conn;
+}
+
     $fullName = $userName = $email = $number = $wpNumber = $address = $password = $confirmPassword = "";
     
     $errMsgs["full_name"] = "";
@@ -9,7 +23,9 @@
     $errMsgs["address"] = "";
     $errMsgs["password"] = "";
     $errMsgs["confirm_password"] = "";
-
+// Registration handler function
+function handleRegistration() {
+    global $errMsgs;
     if ($_SERVER['REQUEST_METHOD'] === "POST")
     {
         $shouldFurtherValidate = true;
@@ -35,13 +51,7 @@
             $password = $_POST["password"];
             $confirmPassword = $_POST["confirm_password"];    
 
-            //configure the db data
-            $servername = "localhost";
-            $db_username = "root";
-            $db_password ="";
-            $db_name = "registrationportal";
-            $tableName = "users";
-        
+
             $shouldStoreIn_db = true;
             $shouldStoreIn_db = validate_fullName($fullName) && $shouldStoreIn_db;
             $shouldStoreIn_db = validate_username($userName) && $shouldStoreIn_db;
@@ -55,50 +65,85 @@
 
             if ($shouldStoreIn_db)
             {
-                //secure the password
-                $password = password_hash($password, PASSWORD_DEFAULT);
 
-                //DB-insertion section            
-                $conn = mysqli_connect($servername, $db_username, $db_password)
-                or die ("couldn't connect to this host, and the error is: " . mysqli_connect_error());
-    
-                // Check if the database exists
-                $sql = "CREATE DATABASE IF NOT EXISTS $db_name";
-                mysqli_query($conn, $sql);
+// Secure the password
+$password = password_hash($password, PASSWORD_DEFAULT);
 
-                //connect to the db
-                mysqli_select_db($conn, $db_name)
-                or die ("couldn't open this database, and the error is: " . mysqli_error($conn));
+// DB-insertion section            
+$conn = getDbConnection();
 
-                //check if the 'users' table exists, and create it if it doesn't
-                $sql = "SHOW TABLES LIKE '$tableName'";
-                $result = mysqli_query($conn, $sql);
-                if ($result->num_rows <= 0) {
-                    $sql = "CREATE TABLE users (
-                        id INT AUTO_INCREMENT PRIMARY KEY,
-                        full_name VARCHAR(255) NOT NULL,
-                        user_name VARCHAR(100) NOT NULL UNIQUE,
-                        phone VARCHAR(20) NOT NULL UNIQUE,
-                        whatsapp_number VARCHAR(20) NULL,
-                        address TEXT NULL,
-                        password VARCHAR(255) NOT NULL, 
-                        user_image VARCHAR(500) NULL, 
-                        email VARCHAR(255) NOT NULL UNIQUE,
-                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-                    );";
+// Prepared statement to prevent SQL injection
+$query = "INSERT INTO users 
+    (full_name, user_name, phone, whatsapp_number, address, password, email)
+    VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-                    mysqli_query($conn, $sql);
-                }
-                
-                //Important note: an arbitraty image path is stored, not the real input. It will be updated to the real input after it's sent to upload.php
-                //insert input into the db
-                $imagePath = "dummy.png";
-                $query = "INSERT INTO $tableName (full_name, user_name, phone, whatsapp_number, address, password, user_image, email) VALUES ('$fullName', '$userName', '$number', '$wpNumber', '$address', '$password', '$imagePath', '$email')";
-                mysqli_query($conn, $query);
-                mysqli_close($conn);
+$stmt = mysqli_prepare($conn, $query);
 
-                //the successful response
-                echo "You have successfully registered!";
+if (!$stmt) {
+    http_response_code(500);
+    echo json_encode([
+        "status" => "error",
+        "message" => "Failed to prepare SQL: " . mysqli_error($conn)
+    ]);
+    exit;
+}
+
+// Bind parameters (s = string)
+mysqli_stmt_bind_param($stmt, "sssssss", 
+    $fullName, $userName, $number, $wpNumber, $address, $password, $email
+);
+
+// Use try-catch for exception handling
+try {
+    // Execute the statement
+    if (!mysqli_stmt_execute($stmt)) {
+        throw new mysqli_sql_exception(mysqli_stmt_error($stmt)); // Manually throw exception
+    }
+
+    // Get the inserted ID
+    $inserted_id = mysqli_insert_id($conn);
+
+    // Clean up
+    mysqli_stmt_close($stmt);
+    mysqli_close($conn);
+
+    // Return successful JSON response
+    header('Content-Type: application/json');
+    echo json_encode([
+        "status" => "success",
+        "user_id" => $inserted_id
+    ]);
+} catch (mysqli_sql_exception $e) {
+    $response = [
+        "status" => "error",
+    ];
+
+    // Check for duplicate entry error (error code 1062)
+    if ($e->getCode() == 1062) {
+        // Check if the error message contains 'phone', indicating duplicate phone
+        if (strpos($e->getMessage(), 'phone') !== false) {
+            $response["phone"] = "Phone number is already taken."; // Send the error message for phone
+        }
+        // Check if the error message contains 'email', indicating duplicate email
+        elseif (strpos($e->getMessage(), 'email') !== false) {
+            $response["email"] = "Email is already registered."; // Send the error message for email
+        }
+        // Check if the error message contains 'email', indicating duplicate email
+        elseif (strpos($e->getMessage(), 'user_name') !== false) {
+            $response["email"] = "Username is already registered."; // Send the error message for email
+        }
+    } else {
+        $response["message"] = "Failed to insert user: " . $e->getMessage(); // Generic error message
+    }
+
+    // Send the error response
+    echo json_encode($response);
+    mysqli_stmt_close($stmt);
+    mysqli_close($conn);
+    exit;
+}
+
+
             }
             else
             {
@@ -112,6 +157,7 @@
             echo json_encode($errMsgs);
         }
     }
+}
 
     function basicValidation ($inputName, &$inputValue){
         if (checkRequired($inputName))
@@ -289,4 +335,8 @@ function validate_confirmPassword($confirmPassword)
     
 //         return $isAvailable;
 //     }
-?>
+
+// Automatically run only when called directly
+if (basename(__FILE__) == basename($_SERVER["SCRIPT_FILENAME"])) {
+    handleRegistration();
+}

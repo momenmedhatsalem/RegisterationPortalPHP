@@ -23,20 +23,20 @@
                 </div>
                     <div>
                         <label for="user_name">Username</label>
-                        <input type="text" id="user_name" class="validate-field" name="user_name" placeholder="Enter your username" required onInput = "check_uniqueness()">
+                        <input type="text" id="user_name" class="validate-field" name="user_name" placeholder="Enter your username" required onInput="check_uniqueness('user_name')">
                         <div class="error-msg" id="user_name_err"></div>
-                </div>
+                    </div>
                 </div>
 
                 <div class="input-group">
                     <div>
                         <label for="email">Email</label>
-                        <input type="email" id="email" class="validate-field" name="email" placeholder="Enter your email" required onInput = "check_uniqueness()">
+                        <input type="email" id="email" class="validate-field" name="email" placeholder="Enter your email" required>
                         <div class="error-msg" id="email_err"></div>
                 </div>
                     <div>
                         <label for="phone">Phone Number</label>
-                        <input type="tel" id="phone" class="validate-field" name="phone" placeholder="Enter your phone number" required onInput = "check_uniqueness()">
+                        <input type="tel" id="phone" class="validate-field" name="phone" placeholder="Enter your phone number" required>
                         <div class="error-msg" id="phone_err"></div>
                 </div>
                 </div>
@@ -81,92 +81,84 @@
         <?php include 'templates/footer.php' ?>
 
 
-        <script src="script.js"></script>
-        <script>
-                    //Send request for server-side validation and insertion to DB
-            function submitForm(event) {
-                //to prevent the form from reloading after submission
-                event.preventDefault();
+<script>
+    function submitForm(event) {
+        event.preventDefault();
 
-                //reset all the dynamic divs
-                document.getElementById("success-msg").style.display = "none";
-                document.querySelectorAll('.error-msg').forEach(element =>
-                {
-                    element.style.display = "none"; 
-                    element.innerHTML = "";
-                });
-                
-                //set and send the request to the main server page (DB_Ops.php)
-                var xmlHttp = new XMLHttpRequest();
-                xmlHttp.open('POST', 'config/DB_Ops.php', true);
+        document.getElementById("success-msg").style.display = "none";
+        document.querySelectorAll('.error-msg').forEach(element => {
+            element.style.display = "none";
+            element.innerHTML = "";
+        });
 
-                var formData = new FormData(document.getElementById('registrationForm'));
-                xmlHttp.send(formData);
+        var formData = new FormData(document.getElementById('registrationForm'));
 
-                // Handle response from DB_Ops.php
-                var isSuccessful = false;
+        // First request: DB_Ops.php
+        var dbRequest = new XMLHttpRequest();
+        dbRequest.open('POST', 'config/DB_Ops.php', true);
 
-                xmlHttp.onreadystatechange = function()
-                {
-                    if (this.readyState == 4 && this.status === 200)
-                    {
-                        var isJson;
-                        try
-                        {
-                            var jsonResponse = JSON.parse(this.responseText);
-                            isJson = true;
+        dbRequest.onreadystatechange = function () {
+            if (this.readyState === 4 && this.status === 200) {
+                let jsonResponse;
+                let isJson = true;
+
+                try {
+                    jsonResponse = JSON.parse(this.responseText);
+                    console.log(jsonResponse);
+                } catch (e) {
+                    isJson = false;
+                }
+
+                if (isJson && jsonResponse.status !== "success") {
+                    // Display validation errors
+                    document.querySelectorAll('.error-msg').forEach(element => {
+                        var key = element.id.slice(0, -4); // Extract the key from the id (e.g., user_name_err => user_name)
+                        
+                        // Check if the key exists in jsonResponse and if there is a non-empty message
+                        var message = jsonResponse[key];
+                        
+                        if (message) { // Only display if the message exists
+                            element.style.display = "block";
+                            element.innerHTML = message;
+                        } else { // If no message exists, hide the error message element
+                            element.style.display = "none";
                         }
-                        catch (e)
-                        {
-                            isJson = false;
-                        }
+                    });
 
-                        if (isJson)
-                        {
-                            document.querySelectorAll('.error-msg').forEach(element =>
-                            {
-                                var responseArrayKey = element.id.slice(0, -4);
-                                var elementResponse = jsonResponse[responseArrayKey];
-                                if (elementResponse !== "")
-                                {
-                                    element.style.display = "block"; 
-                                    element.innerHTML = elementResponse;
-                                }
-                            });
-                        }
-                        else
-                        {
-                            isSuccessful = true;
-                        }
-                    }
-                };
+                } else if (isJson && jsonResponse.status === "success") {
+                    console.log("JSON", jsonResponse);
+                    // Get the returned user_id
+                    var userId = jsonResponse.user_id;
+                    formData.append("user_id", userId);
 
-                //now, connect to upload.php, to handle the uploaded image
-                //set and send the request to upload.php
-                var xmlHttp = new XMLHttpRequest();
-                xmlHttp.open('POST', 'upload.php', true);
-                xmlHttp.send(formData);
+                    // Proceed to upload the image
+                    var uploadRequest = new XMLHttpRequest();
+                    uploadRequest.open('POST', 'upload.php', true);
 
-                //process the response
-                xmlHttp.onreadystatechange = function()
-                {
-                    if (this.readyState == 4 && this.status === 200)
-                    {
-                        var responseText = this.responseText;
-                        var firstWord = responseText.trim().split(" ")[0];
+                    uploadRequest.onreadystatechange = function () {
+                        if (this.readyState === 4 && this.status === 200) {
+                            var responseText = this.responseText.trim();
+                            var firstWord = responseText.split(" ")[0];
 
-                        if (firstWord == "Error")
-                        {
-                            document.getElementById("user_image_err").innerText = responseText;
+                            if (firstWord === "Error") {
+                                document.getElementById("user_image_err").innerText = responseText;
+                            } else {
+                                document.getElementById("success-msg").style.display = "block";
+                                document.getElementById("registrationForm").reset();
+                            }
                         }
-                        else if (isSuccessful)
-                        {
-                            document.getElementById("success-msg").style.display = "block"; 
-                        }
-                    }
-                };
+                    };
+
+                    uploadRequest.send(formData);
+                } else {
+                    console.error("Unexpected non-JSON response:", this.responseText);
+                }
             }
-        </script>
+        };
+
+        dbRequest.send(formData);
+    }
+</script>
 
    
         <script>
@@ -297,22 +289,19 @@
 
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script>
-            $(document).ready(function() {
-                $(".validate-field").on("input", function() {
-                    let field = $(this).attr("id"); // Get field ID (user_name, email, phone)
-                    check_uniqueness(field);
-                });
-            });
-    
             function check_uniqueness(field) {
                 let value = $("#" + field).val();
                 let registerBtn = $("#register-btn");
+                let messageSpan = $("#" + field + "_err");
             
-                if (value.trim() === "") {
-                    $("#" + field + "-check").html(""); // Clear message if empty
-                    checkAllFields(); // Check if all fields are valid before enabling the button
+                // Clear message immediately if field is empty
+                if (value == "") {
+                    messageSpan.html("");
+                    $("#" + field).attr("data-valid", "false");
+                    checkAllFields();
                     return;
                 }
+
             
                 jQuery.ajax({
                     url: "config/check_uniqueness.php",
@@ -320,7 +309,6 @@
                     type: "POST",
                     success: function(data) {
                         let response = JSON.parse(data);
-                        let messageSpan = $("#" + field + "_err");
             
                         if (response.available) {
                             messageSpan.html("<span style='color: green; font-size: 11px; display: block; margin-top: 3px; text-align: left;'>" + field.replace("_", " ") + " is available</span>").css("display", "block"); // <-- show it

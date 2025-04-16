@@ -7,6 +7,8 @@
     <style>
         body {
             margin: 0;
+            padding-top: 80px;
+            /* Added this to prevent content from hiding behind fixed header */
             font-family: Arial, sans-serif;
         }
 
@@ -17,14 +19,22 @@
             padding: 15px 45px;
             background: white;
             color: black;
-            position: relative;
-
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
             border-radius: 12px;
-            /* Round the edges of the header */
             margin: 10px;
-            /* Optional: Adds spacing around it */
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            /* Optional: Adds depth */
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateZ(0);
+            will-change: transform;
+            z-index: 1000;
+        }
+
+        .header-scrolled {
+            margin: 0;
+            border-radius: 0;
         }
 
         .logo {
@@ -35,19 +45,22 @@
             display: flex;
             gap: 20px;
             align-items: center;
+            margin: 0 auto;
+            /* This centers the nav-links */
+            padding-right: 40px;
         }
 
         .nav-links a {
             color: black;
             text-decoration: none;
             position: relative;
-            transition: color 0.3s ease;
+            transition: color 0.15ms ease;
 
             padding: 10px 15px;
             border-radius: 8px;
         }
 
-        .nav-links a::after {
+        /* .nav-links a::after {
             content: '';
             position: absolute;
             width: 0;
@@ -55,17 +68,17 @@
             bottom: -5px;
             left: 0;
             background-color: black;
-            transition: width 0.3s ease;
-        }
+            transition: width 0.15ms ease;
+        } */
 
         .nav-links a:hover {
             color: #007bff;
             background-color: #f1f1f1;
         }
 
-        .nav-links a:hover::after {
+        /* .nav-links a:hover::after {
             width: 100%;
-        }
+        } */
 
         .dropdown {
             position: relative;
@@ -78,6 +91,7 @@
             min-width: 200px;
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
             z-index: 1;
+            margin-top: 10px;
             top: 100%;
             left: 0;
             border-radius: 5px;
@@ -110,10 +124,10 @@
 
 
         .logo-container {
-            width: 22px;
-            height: 22px;
+            width: 40px;
+            height: 45px;
             position: absolute;
-            left: 15px;
+            left: 7px;
             top: 50%;
             transform: translateY(-50%);
         }
@@ -130,17 +144,10 @@
 <body>
     <header class="header">
         <div class="logo-container">
-            <img src="public/assets/img/university-logo.svg" alt="University Logo" class="logo">
+            <img src="public/assets/img/Cairo_University_crest.svg" alt="University Logo" class="logo">
         </div>
         <nav class="nav-links">
-            <div class="dropdown">
-                <a href="#">Home</a>
-                <div class="dropdown-content">
-                    <a href="#">Subpage 1</a>
-                    <a href="#">Subpage 2</a>
-                    <a href="#">Subpage 3</a>
-                </div>
-            </div>
+            <a href="#">Home</a>
             <div class="dropdown">
                 <a href="#">Our Services</a>
                 <div class="dropdown-content">
@@ -153,6 +160,41 @@
             <a href="#">About us</a>
         </nav>
     </header>
+    <script>
+        let ticking = false;
+        let isExpanded = false;
+        let lastScrollPosition = 0;
+        let debounceTimer;
+
+        window.addEventListener('scroll', function() {
+            if (!ticking) {
+                window.requestAnimationFrame(function() {
+                    const header = document.querySelector('.header');
+                    const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+
+                    // Clear any pending timer
+                    clearTimeout(debounceTimer);
+
+
+                    if (currentScroll > 50) {
+                        if (!isExpanded) {
+                            header.classList.add('header-scrolled');
+                            isExpanded = true;
+                        }
+                    } else {
+                        if (isExpanded) {
+                            header.classList.remove('header-scrolled');
+                            isExpanded = false;
+                        }
+                    }
+
+                    lastScrollPosition = currentScroll;
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        });
+    </script>
 </body>
 
 </html>

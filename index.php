@@ -31,12 +31,12 @@
                 <div class="input-group">
                     <div>
                         <label for="email">Email</label>
-                        <input type="email" id="email" class="validate-field" name="email" placeholder="Enter your email" required onInput="check_uniqueness('email')">
+                        <input type="email" id="email" class="validate-field" name="email" placeholder="Enter your email" required>
                         <div class="error-msg" id="email_err"></div>
                 </div>
                     <div>
                         <label for="phone">Phone Number</label>
-                        <input type="tel" id="phone" class="validate-field" name="phone" placeholder="Enter your phone number" required onInput = "check_uniqueness('phone')">
+                        <input type="tel" id="phone" class="validate-field" name="phone" placeholder="Enter your phone number" required>
                         <div class="error-msg" id="phone_err"></div>
                 </div>
                 </div>
@@ -289,13 +289,6 @@
 
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script>
-            $(document).ready(function() {
-                $(".validate-field").on("input", function() {
-                    let field = $(this).attr("id"); // Get field ID (user_name, email, phone)
-                    // check_uniqueness(field);
-                });
-            });
-    
             function check_uniqueness(field) {
                 let value = $("#" + field).val();
                 let registerBtn = $("#register-btn");

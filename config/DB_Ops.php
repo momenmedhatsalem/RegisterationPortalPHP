@@ -1,4 +1,18 @@
 <?php
+function getDbConnection() {
+    static $conn = null;
+    if ($conn === null) {
+        $servername = "localhost";
+        $db_username = "root";
+        $db_password = "";
+        $db_name = "registrationportal";
+
+        $conn = mysqli_connect($servername, $db_username, $db_password, $db_name)
+            or die("Couldn't connect to the database: " . mysqli_connect_error());
+    }
+    return $conn;
+}
+
     $fullName = $userName = $email = $number = $wpNumber = $address = $password = $confirmPassword = "";
     
     $errMsgs["full_name"] = "";

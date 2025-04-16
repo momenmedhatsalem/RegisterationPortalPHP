@@ -1,6 +1,6 @@
 <?php
 // Include the database connection file
-require 'config/DB_Ops.php'; // Ensure correct path
+require_once 'config/DB_Ops.php'; // Ensure correct path
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["user_image"])) {
     $uploadDir = "uploads/users/";  // Directory to store images
@@ -27,8 +27,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["user_image"])) {
     $originalFileName = pathinfo($fileName, PATHINFO_FILENAME); // Get filename without extension
     $originalFileName = preg_replace('/[^a-zA-Z0-9_-]/', '_', $originalFileName); // Sanitize
 
-    // Hardcoded user ID
-    $userId = 1;
+    $userId = $_POST['user_id'] ?? null;
+
+    if (!$userId) {
+        echo "Error: No user ID provided";
+        exit;
+    }
+
 
     // Generate a unique key
     $uniqueKey = uniqid();
@@ -40,6 +45,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["user_image"])) {
     // Move file to the upload directory
     if (move_uploaded_file($fileTmpName, $filePath)) {
         // Insert only the new file name into the database
+        $conn = getDbConnection();
         $stmt = $conn->prepare("UPDATE users SET user_image = ? WHERE id = ?");
         $stmt->bind_param("si", $newFileName, $userId);
 

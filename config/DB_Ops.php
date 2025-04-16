@@ -66,58 +66,83 @@ function handleRegistration() {
             if ($shouldStoreIn_db)
             {
 
-                // Secure the password
-                $password = password_hash($password, PASSWORD_DEFAULT);
+// Secure the password
+$password = password_hash($password, PASSWORD_DEFAULT);
 
-                // DB-insertion section            
-                $conn = getDbConnection();
+// DB-insertion section            
+$conn = getDbConnection();
 
-                // Prepared statement to prevent SQL injection
-                $query = "INSERT INTO users 
-                    (full_name, user_name, phone, whatsapp_number, address, password, email)
-                    VALUES (?, ?, ?, ?, ?, ?, ?)";
+// Prepared statement to prevent SQL injection
+$query = "INSERT INTO users 
+    (full_name, user_name, phone, whatsapp_number, address, password, email)
+    VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-                $stmt = mysqli_prepare($conn, $query);
+$stmt = mysqli_prepare($conn, $query);
 
-                if (!$stmt) {
-                    http_response_code(500);
-                    echo json_encode([
-                        "status" => "error",
-                        "message" => "Failed to prepare SQL: " . mysqli_error($conn)
-                    ]);
-                    exit;
-                }
+if (!$stmt) {
+    http_response_code(500);
+    echo json_encode([
+        "status" => "error",
+        "message" => "Failed to prepare SQL: " . mysqli_error($conn)
+    ]);
+    exit;
+}
 
-                // Bind parameters (s = string)
-                mysqli_stmt_bind_param($stmt, "sssssss", 
-                    $fullName, $userName, $number, $wpNumber, $address, $password, $email
-                );
+// Bind parameters (s = string)
+mysqli_stmt_bind_param($stmt, "sssssss", 
+    $fullName, $userName, $number, $wpNumber, $address, $password, $email
+);
 
-                // Execute the statement
-                if (!mysqli_stmt_execute($stmt)) {
-                    http_response_code(500);
-                    echo json_encode([
-                        "status" => "error",
-                        "message" => "Failed to insert user: " . mysqli_stmt_error($stmt)
-                    ]);
-                    mysqli_stmt_close($stmt);
-                    mysqli_close($conn);
-                    exit;
-                }
+// Use try-catch for exception handling
+try {
+    // Execute the statement
+    if (!mysqli_stmt_execute($stmt)) {
+        throw new mysqli_sql_exception(mysqli_stmt_error($stmt)); // Manually throw exception
+    }
 
-                // Get the inserted ID
-                $inserted_id = mysqli_insert_id($conn);
+    // Get the inserted ID
+    $inserted_id = mysqli_insert_id($conn);
 
-                // Clean up
-                mysqli_stmt_close($stmt);
-                mysqli_close($conn);
+    // Clean up
+    mysqli_stmt_close($stmt);
+    mysqli_close($conn);
 
-                // Return successful JSON response
-                header('Content-Type: application/json');
-                echo json_encode([
-                    "status" => "success",
-                    "user_id" => $inserted_id
-                ]);
+    // Return successful JSON response
+    header('Content-Type: application/json');
+    echo json_encode([
+        "status" => "success",
+        "user_id" => $inserted_id
+    ]);
+} catch (mysqli_sql_exception $e) {
+    $response = [
+        "status" => "error",
+    ];
+
+    // Check for duplicate entry error (error code 1062)
+    if ($e->getCode() == 1062) {
+        // Check if the error message contains 'phone', indicating duplicate phone
+        if (strpos($e->getMessage(), 'phone') !== false) {
+            $response["phone"] = "Phone number is already taken."; // Send the error message for phone
+        }
+        // Check if the error message contains 'email', indicating duplicate email
+        elseif (strpos($e->getMessage(), 'email') !== false) {
+            $response["email"] = "Email is already registered."; // Send the error message for email
+        }
+        // Check if the error message contains 'email', indicating duplicate email
+        elseif (strpos($e->getMessage(), 'user_name') !== false) {
+            $response["email"] = "Username is already registered."; // Send the error message for email
+        }
+    } else {
+        $response["message"] = "Failed to insert user: " . $e->getMessage(); // Generic error message
+    }
+
+    // Send the error response
+    echo json_encode($response);
+    mysqli_stmt_close($stmt);
+    mysqli_close($conn);
+    exit;
+}
+
 
             }
             else

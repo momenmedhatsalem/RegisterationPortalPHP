@@ -137,6 +137,7 @@
                                 document.getElementById("user_image_err").innerText = responseText;
                             } else {
                                 document.getElementById("success-msg").style.display = "block";
+                                document.getElementById("registrationForm").reset();
                             }
                         }
                     };

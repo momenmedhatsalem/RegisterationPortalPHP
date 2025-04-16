@@ -81,92 +81,76 @@
         <?php include 'templates/footer.php' ?>
 
 
-        <script src="script.js"></script>
-        <script>
-                    //Send request for server-side validation and insertion to DB
-            function submitForm(event) {
-                //to prevent the form from reloading after submission
-                event.preventDefault();
+<script>
+    function submitForm(event) {
+        event.preventDefault();
 
-                //reset all the dynamic divs
-                document.getElementById("success-msg").style.display = "none";
-                document.querySelectorAll('.error-msg').forEach(element =>
-                {
-                    element.style.display = "none"; 
-                    element.innerHTML = "";
-                });
-                
-                //set and send the request to the main server page (DB_Ops.php)
-                var xmlHttp = new XMLHttpRequest();
-                xmlHttp.open('POST', 'config/DB_Ops.php', true);
+        document.getElementById("success-msg").style.display = "none";
+        document.querySelectorAll('.error-msg').forEach(element => {
+            element.style.display = "none";
+            element.innerHTML = "";
+        });
 
-                var formData = new FormData(document.getElementById('registrationForm'));
-                xmlHttp.send(formData);
+        var formData = new FormData(document.getElementById('registrationForm'));
 
-                // Handle response from DB_Ops.php
-                var isSuccessful = false;
+        // First request: DB_Ops.php
+        var dbRequest = new XMLHttpRequest();
+        dbRequest.open('POST', 'config/DB_Ops.php', true);
 
-                xmlHttp.onreadystatechange = function()
-                {
-                    if (this.readyState == 4 && this.status === 200)
-                    {
-                        var isJson;
-                        try
-                        {
-                            var jsonResponse = JSON.parse(this.responseText);
-                            isJson = true;
+        dbRequest.onreadystatechange = function () {
+            if (this.readyState === 4 && this.status === 200) {
+                let jsonResponse;
+                let isJson = true;
+
+                try {
+                    jsonResponse = JSON.parse(this.responseText);
+                    console.log(jsonResponse);
+                } catch (e) {
+                    isJson = false;
+                }
+
+                if (isJson && jsonResponse.status !== "success") {
+                    // Display validation errors
+                    document.querySelectorAll('.error-msg').forEach(element => {
+                        var key = element.id.slice(0, -4);
+                        var message = jsonResponse[key];
+                        if (message !== "") {
+                            element.style.display = "block";
+                            element.innerHTML = message;
                         }
-                        catch (e)
-                        {
-                            isJson = false;
-                        }
+                    });
+                } else if (isJson && jsonResponse.status === "success") {
+                    // Get the returned user_id
+                    var userId = jsonResponse.user_id;
+                    formData.append("user_id", userId);
 
-                        if (isJson)
-                        {
-                            document.querySelectorAll('.error-msg').forEach(element =>
-                            {
-                                var responseArrayKey = element.id.slice(0, -4);
-                                var elementResponse = jsonResponse[responseArrayKey];
-                                if (elementResponse !== "")
-                                {
-                                    element.style.display = "block"; 
-                                    element.innerHTML = elementResponse;
-                                }
-                            });
-                        }
-                        else
-                        {
-                            isSuccessful = true;
-                        }
-                    }
-                };
+                    // Proceed to upload the image
+                    var uploadRequest = new XMLHttpRequest();
+                    uploadRequest.open('POST', 'upload.php', true);
 
-                //now, connect to upload.php, to handle the uploaded image
-                //set and send the request to upload.php
-                var xmlHttp = new XMLHttpRequest();
-                xmlHttp.open('POST', 'upload.php', true);
-                xmlHttp.send(formData);
+                    uploadRequest.onreadystatechange = function () {
+                        if (this.readyState === 4 && this.status === 200) {
+                            var responseText = this.responseText.trim();
+                            var firstWord = responseText.split(" ")[0];
 
-                //process the response
-                xmlHttp.onreadystatechange = function()
-                {
-                    if (this.readyState == 4 && this.status === 200)
-                    {
-                        var responseText = this.responseText;
-                        var firstWord = responseText.trim().split(" ")[0];
+                            if (firstWord === "Error") {
+                                document.getElementById("user_image_err").innerText = responseText;
+                            } else {
+                                document.getElementById("success-msg").style.display = "block";
+                            }
+                        }
+                    };
 
-                        if (firstWord == "Error")
-                        {
-                            document.getElementById("user_image_err").innerText = responseText;
-                        }
-                        else if (isSuccessful)
-                        {
-                            document.getElementById("success-msg").style.display = "block"; 
-                        }
-                    }
-                };
+                    uploadRequest.send(formData);
+                } else {
+                    console.error("Unexpected non-JSON response:", this.responseText);
+                }
             }
-        </script>
+        };
+
+        dbRequest.send(formData);
+    }
+</script>
 
    
         <script>
@@ -300,11 +284,12 @@
             $(document).ready(function() {
                 $(".validate-field").on("input", function() {
                     let field = $(this).attr("id"); // Get field ID (user_name, email, phone)
-                    check_uniqueness(field);
+                    // check_uniqueness(field);
                 });
             });
     
             function check_uniqueness(field) {
+                    return;
                 let value = $("#" + field).val();
                 let registerBtn = $("#register-btn");
             

@@ -23,20 +23,20 @@
                 </div>
                     <div>
                         <label for="user_name">Username</label>
-                        <input type="text" id="user_name" class="validate-field" name="user_name" placeholder="Enter your username" required onInput = "check_uniqueness()">
+                        <input type="text" id="user_name" class="validate-field" name="user_name" placeholder="Enter your username" required onInput="check_uniqueness('user_name')">
                         <div class="error-msg" id="user_name_err"></div>
-                </div>
+                    </div>
                 </div>
 
                 <div class="input-group">
                     <div>
                         <label for="email">Email</label>
-                        <input type="email" id="email" class="validate-field" name="email" placeholder="Enter your email" required onInput = "check_uniqueness()">
+                        <input type="email" id="email" class="validate-field" name="email" placeholder="Enter your email" required>
                         <div class="error-msg" id="email_err"></div>
                 </div>
                     <div>
                         <label for="phone">Phone Number</label>
-                        <input type="tel" id="phone" class="validate-field" name="phone" placeholder="Enter your phone number" required onInput = "check_uniqueness()">
+                        <input type="tel" id="phone" class="validate-field" name="phone" placeholder="Enter your phone number" required>
                         <div class="error-msg" id="phone_err"></div>
                 </div>
                 </div>
@@ -112,14 +112,21 @@
                 if (isJson && jsonResponse.status !== "success") {
                     // Display validation errors
                     document.querySelectorAll('.error-msg').forEach(element => {
-                        var key = element.id.slice(0, -4);
+                        var key = element.id.slice(0, -4); // Extract the key from the id (e.g., user_name_err => user_name)
+                        
+                        // Check if the key exists in jsonResponse and if there is a non-empty message
                         var message = jsonResponse[key];
-                        if (message !== "") {
+                        
+                        if (message) { // Only display if the message exists
                             element.style.display = "block";
                             element.innerHTML = message;
+                        } else { // If no message exists, hide the error message element
+                            element.style.display = "none";
                         }
                     });
+
                 } else if (isJson && jsonResponse.status === "success") {
+                    console.log("JSON", jsonResponse);
                     // Get the returned user_id
                     var userId = jsonResponse.user_id;
                     formData.append("user_id", userId);
@@ -282,23 +289,19 @@
 
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script>
-            $(document).ready(function() {
-                $(".validate-field").on("input", function() {
-                    let field = $(this).attr("id"); // Get field ID (user_name, email, phone)
-                    // check_uniqueness(field);
-                });
-            });
-    
             function check_uniqueness(field) {
-                    return;
                 let value = $("#" + field).val();
                 let registerBtn = $("#register-btn");
+                let messageSpan = $("#" + field + "_err");
             
-                if (value.trim() === "") {
-                    $("#" + field + "-check").html(""); // Clear message if empty
-                    checkAllFields(); // Check if all fields are valid before enabling the button
+                // Clear message immediately if field is empty
+                if (value == "") {
+                    messageSpan.html("");
+                    $("#" + field).attr("data-valid", "false");
+                    checkAllFields();
                     return;
                 }
+
             
                 jQuery.ajax({
                     url: "config/check_uniqueness.php",
@@ -306,7 +309,6 @@
                     type: "POST",
                     success: function(data) {
                         let response = JSON.parse(data);
-                        let messageSpan = $("#" + field + "_err");
             
                         if (response.available) {
                             messageSpan.html("<span style='color: green; font-size: 11px; display: block; margin-top: 3px; text-align: left;'>" + field.replace("_", " ") + " is available</span>").css("display", "block"); // <-- show it

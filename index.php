@@ -45,7 +45,9 @@
                     <div>
                         <label for="whatsapp">WhatsApp Number</label>
                         <input type="tel" id="whatsapp" name="whatsapp" placeholder="Enter your WhatsApp number" required>
-                        <div class="error-msg" id="whatsapp_err"></div>
+                        <button type="button" class="whatsapp-btn" id="validBtn" onclick="checkWhatsApp()">Validate</button>
+                        <div class="error-message" id="whatsapp_err"></div>
+                        <div id="whatsapp-check-msg"></div>
                 </div>
                     <div>
                         <label for="address">Address</label>
@@ -339,5 +341,46 @@
                 $("#register-btn").prop("disabled", !allValid); // Enable if all fields are valid
             }
         </script>
+<script>
+function checkWhatsApp() {
+    const number = document.getElementById('whatsapp').value;
+    const msgDiv = document.getElementById('whatsapp-check-msg');
+    const errDiv = document.getElementById('whatsapp_err');
+
+    msgDiv.textContent = '';
+    errDiv.textContent = '';
+
+    if (!number) {
+        errDiv.textContent = 'Please enter a number.';
+        return;
+    }
+
+    fetch('app/services/API_Ops.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `number=${encodeURIComponent(number)}`
+    })
+    .then(res => res.json())
+    .then(data => {
+        console.log('API Response:', data);
+        if (!data || data.status === 'error') {
+            errDiv.textContent = data.message || 'Something went wrong.';
+        } else if (data.status === 'valid') {
+            msgDiv.textContent = ` ✅ Valid`;
+        } else if (data.status === 'invalid') {
+            msgDiv.textContent = `❌ Not valid`;
+        } else {
+            msgDiv.textContent = `Unexpected response: ${data.status}`;
+        }
+    })
+    .catch(error => {
+        errDiv.textContent = 'Validation failed. Try again later.';
+        console.error('Error:', error);
+    });
+}
+</script>
+</script>
     </body>
 </html>

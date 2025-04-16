@@ -102,7 +102,7 @@ input[type="file"] {
     padding-left: 10px;
     padding-right: 10px;
     text-align: center;
-    display: none; /*  hidden */
+    display: none; /* hidden */
 }
 
 .success-msg {
@@ -231,4 +231,30 @@ ul{
     color: rgba(0, 0, 0, 0.5);
     display: block;
     margin-top: 3px;
+}
+
+.whatsapp-btn {
+    background: linear-gradient(to right, #a7a6d6, #2575fc);
+    border: none;
+    color: white;
+    padding: 4px ;  
+    font-size: 14px;   
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-top: 5px; 
+    margin-left: 1px;
+    width: auto;      
+}
+
+.whatsapp-btn:hover {
+    background: linear-gradient(to right, #5a0ebc, #1f66db);
+}
+#whatsapp-check-msg{
+    font-size: 12px;
+    margin-top: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+    text-align: center;
+
 }

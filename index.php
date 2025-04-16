@@ -162,6 +162,7 @@
                         else if (isSuccessful)
                         {
                             document.getElementById("success-msg").style.display = "block"; 
+                             document.getElementById("registrationForm").reset();
                         }
                     }
                 };

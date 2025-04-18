@@ -147,6 +147,7 @@
                             } else {
                                 document.getElementById("success-msg").style.display = "block";
                                 document.getElementById("registrationForm").reset();
+                                window.scrollTo(0, 0);
                             }
                         }
                     };

@@ -7,11 +7,48 @@ function getDbConnection() {
         $db_password = "";
         $db_name = "registrationportal";
 
-        $conn = mysqli_connect($servername, $db_username, $db_password, $db_name)
-            or die("Couldn't connect to the database: " . mysqli_connect_error());
+        // Step 1: Connect to MySQL server without selecting a database
+        $tempConn = mysqli_connect($servername, $db_username, $db_password);
+        if (!$tempConn) {
+            die("Couldn't connect to MySQL server: " . mysqli_connect_error());
+        }
+
+        // Step 2: Create the database if it doesn't exist
+        $createDbQuery = "CREATE DATABASE IF NOT EXISTS `$db_name` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci";
+        if (!mysqli_query($tempConn, $createDbQuery)) {
+            die("Database creation failed: " . mysqli_error($tempConn));
+        }
+
+        // Step 3: Close temp connection and connect to the actual database
+        mysqli_close($tempConn);
+        $conn = mysqli_connect($servername, $db_username, $db_password, $db_name);
+        if (!$conn) {
+            die("Couldn't connect to the database: " . mysqli_connect_error());
+        }
+
+        // Step 4: Create the `users` table if it doesn't exist
+        $createUsersTable = "
+            CREATE TABLE IF NOT EXISTS users (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                full_name VARCHAR(255) NOT NULL,
+                user_name VARCHAR(100) NOT NULL UNIQUE,
+                phone VARCHAR(20) NOT NULL UNIQUE,
+                whatsapp_number VARCHAR(20) NULL,
+                address TEXT NULL,
+                password VARCHAR(255) NOT NULL, 
+                user_image VARCHAR(500) NULL, 
+                email VARCHAR(255) NOT NULL UNIQUE,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+        ";
+        if (!mysqli_query($conn, $createUsersTable)) {
+            die("Table creation failed: " . mysqli_error($conn));
+        }
     }
+
     return $conn;
 }
+
 
     $fullName = $userName = $email = $number = $wpNumber = $address = $password = $confirmPassword = "";
     

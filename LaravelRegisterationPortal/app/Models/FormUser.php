@@ -10,5 +10,5 @@ class FormUser extends Model
     /** @use HasFactory<\Database\Factories\FormUserFactory> */
     use HasFactory;
 
-    protected $fillables = ['name', 'user_name', 'password', 'email', 'phone_number', 'whatsapp_phone_number', 'address', 'image_path'];
+    protected $fillables = ['name', 'username', 'password', 'email', 'phone_number', 'whatsapp_phone_number', 'address', 'image_path'];
 }

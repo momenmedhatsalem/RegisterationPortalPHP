@@ -20,7 +20,7 @@ class FormUserFactory extends Factory
 
         return [
             'name' => $this->faker->name(),
-            'user_name' => $this->faker->unique()->userName(),
+            'username' => $this->faker->unique()->userName(),
             'password' => $this->faker->password(),
             'email' => $this->faker->unique()->safeEmail(),
             'phone_number' => $this->faker->unique()->phoneNumber(),

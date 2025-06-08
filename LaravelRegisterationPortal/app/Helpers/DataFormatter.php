@@ -2,7 +2,7 @@
 
 namespace App\Helpers;
 
-class FormDataFormatter {
+class DataFormatter {
 
     public static function clean($input) {
         return htmlspecialchars(trim(stripslashes($input)));

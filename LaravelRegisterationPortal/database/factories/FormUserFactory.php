@@ -16,7 +16,7 @@ class FormUserFactory extends Factory
      */
     public function definition(): array
     {
-        $dummyImagePath = 'images/assets/dummy.png';
+        $dummyImagePath = 'images/assets/seeding_image.png';
 
         return [
             'name' => $this->faker->name(),

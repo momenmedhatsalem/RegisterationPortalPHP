@@ -5,11 +5,21 @@ namespace App\Helpers;
 class DataFormatter {
 
     public static function clean($input) {
+        if (is_null($input))
+        {
+            return $input;
+        }
+
         return htmlspecialchars(trim(stripslashes($input)));
     }
 
 
     public static function removeRedundantWS ($text) {
+        if (is_null($text))
+        {
+            return $text;
+        }
+
         $found_WS = false;
         for ($i = 0; $i < strlen($text); $i++)
         {
@@ -32,7 +42,12 @@ class DataFormatter {
 
 
     public static function formatPhoneNumber ($phoneNumber) {
-        if (!$phoneNumber[0] === '+')
+        if (is_null($phoneNumber))
+        {
+            return $phoneNumber;
+        }
+
+        if ($phoneNumber[0] !== '+')
         {
             $char = '+';
             $phoneNumber = $char . $phoneNumber; 

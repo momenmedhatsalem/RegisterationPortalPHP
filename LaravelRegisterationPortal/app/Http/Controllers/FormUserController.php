@@ -2,9 +2,7 @@
 
 namespace App\Http\Controllers;
 
-
 use App\Services\FormUserService;
-
 
 use Illuminate\Http\Request;
 
@@ -23,7 +21,6 @@ class FormUserController extends Controller
         FormUserService::validateFormData($request);
         FormUserService::formatAndStoreFormData($request);
 
-        //TODO: put the correct view name
         return redirect('/')->with('success', 'You are successfully registered!');
     }
 }

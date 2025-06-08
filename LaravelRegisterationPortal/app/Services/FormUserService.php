@@ -128,9 +128,9 @@ class FormUserService {
         //clean the name from any extra-special chars
         $originalFileName = preg_replace('/[^a-zA-Z0-9_-]/', '_', $originalFileName);
         $fileExtension = $image->getClientOriginalExtension();
-        $newFileName = "user_{$user->id}_{$originalFileName}.{$fileExtension}";
+        $uploadDir = 'images/uploads/';
+        $newFileName = "{$uploadDir}user_{$user->id}_{$originalFileName}.{$fileExtension}";
 
-        $uploadDir = 'images/users/';
         $image->move(public_path($uploadDir), $newFileName);
 
         $user->image_path = $newFileName;

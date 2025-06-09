@@ -161,4 +161,19 @@ class FormUserService {
         $user->image_path = $newFileName;
         $user->save();
     }
+
+    /**
+     *
+     * @param string $number     *
+     * @throws \Exception If the API call fails or the number is invalid.
+     */
+
+     private function validateWhatsAppNumberAPI($whatsappNumber){
+        try {
+            WhatsAppService::validate($whatsappNumber);
+        } catch (\Exception $e) {
+            abort(422, $e->getMessage());
+        }
+
+    }
 }

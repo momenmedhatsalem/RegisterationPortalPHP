@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Registration</title>
     <style>
@@ -54,7 +55,10 @@
                 <div>
                     <label for="whatsapp_phone_number">{{ __('register.whatsapp_number') }}</label>
                     <input type="tel" id="whatsapp_phone_number" name="whatsapp_phone_number" placeholder="{{ __('register.whatsapp_number_placeholder') }}" required />
-                    <button type="button" class="whatsapp_phone_number-btn" id="validBtn" onclick="checkWhatsApp_phone_number()">{{ __('register.validate') }}</button>
+                    <small style="font-size: 10px; color: rgba(0, 0, 0, 0.5); display: block; margin-top: 3px; text-align: left;">
+                        Please start with country code, e.g. +1 for USA, +20 for EG.
+                    </small>
+                    <button type="button" class="whatsapp_phone_number-btn" id="validBtn" onclick="checkWhatsApp()">{{ __('register.validate') }}</button>
                     <div class="error-msg" id="whatsapp_phone_number_err"></div>
                     <div id="whatsapp_phone_number-check-msg"></div>
                 </div>
@@ -99,6 +103,13 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script>
+    
+    $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
         function submitForm(event) {
             event.preventDefault();
 
@@ -182,6 +193,49 @@
                 }
             });
         });
+        //Whatsapp Number Validation
+         function checkWhatsApp() {
+            const number = document.getElementById('whatsapp_phone_number').value;
+            const msgDiv = document.getElementById('whatsapp_phone_number-check-msg');
+            const errDiv = document.getElementById('whatsapp_phone_number_err');
+            const validBtn = document.getElementById('validBtn');
+
+            msgDiv.textContent = '';
+            errDiv.textContent = '';
+
+        
+
+            validBtn.textContent = 'Validating...';
+
+            $.ajax({
+                url: "{{ route('check.whatsapp') }}",
+                type: 'POST',
+                data: { 
+                    whatsapp_phone_number: number 
+                },
+                success: function(data) {
+                    validBtn.textContent = 'Validate';
+                    if (data.valid) {
+                        msgDiv.innerHTML = '<span style="color: green;">✅ Valid WhatsApp number</span>';
+                    } else {
+                        msgDiv.innerHTML = '<span style="color: red;">❌ ' + (data.message || 'Invalid WhatsApp number')+ '</span>';
+                    }
+                },
+                error: function(xhr) {
+                    validBtn.textContent = 'Validate';
+                    console.error('Error response:', xhr.responseText);//debug
+                     try {
+                const response = JSON.parse(xhr.responseText);
+                let errorMessage = 'Validation failed. Please Try again later.'
+                errDiv.textContent = response.message || errorMessage;
+                } catch (e) {
+                errDiv.textContent = errorMessage;
+                }
+                errDiv.textContent = errorMessage;
+                errDiv.classList.remove('hidden');
+                }
+            });
+        }
     </script>
 </body>
 </html>

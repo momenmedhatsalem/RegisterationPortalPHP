@@ -102,7 +102,7 @@ input[type="file"] {
     padding-left: 10px;
     padding-right: 10px;
     text-align: center;
-    display: none; /* hidden */
+    display: hidden; /* hidden */
 }
 
 .success-msg {
@@ -258,3 +258,4 @@ ul{
     text-align: center;
 
 }
+

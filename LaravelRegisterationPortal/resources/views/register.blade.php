@@ -4,6 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Registration</title>
+    <style>
+    :root {
+      --text-align: {{ in_array(app()->getLocale(), ['ar', 'he', 'fa']) ? 'right' : 'left' }};
+    }
+    </style>
     <link rel="stylesheet" href="{{ asset('css/style.css') }}" />
 </head>
 <body>
@@ -13,78 +18,81 @@
     <div class="container">
         <form id="registrationForm" method="POST" action="/submit" enctype="multipart/form-data" novalidate>
             @csrf
-            <h2>Registration</h2>
+            <h2>{{ __('register.registration') }}</h2>
 
-            <div id="success-msg" class="success-msg" style="display:none;">Registration Successful!</div>
+            <div id="success-msg" class="success-msg" style="display:none;">
+                {{ __('register.success_msg') }}
+            </div>
 
             <div class="input-group">
                 <div>
-                    <label for="name">Full Name</label>
-                    <input type="text" id="name" name="name" placeholder="Enter your full name" required />
+                    <label for="name">{{ __('register.full_name') }}</label>
+                    <input type="text" id="name" name="name" placeholder="{{ __('register.full_name_placeholder') }}" required />
                     <div class="error-msg" id="name_err"></div>
                 </div>
                 <div>
-                    <label for="username">Username</label>
-                    <input type="text" id="username" class="validate-field" name="username" placeholder="Enter your username" required oninput="check_uniqueness('username')"/>
+                    <label for="username">{{ __('register.username') }}</label>
+                    <input type="text" id="username" class="validate-field" name="username" placeholder="{{ __('register.username_placeholder') }}" required oninput="check_uniqueness('username')" />
                     <div class="error-msg" id="username_err"></div>
                 </div>
             </div>
 
             <div class="input-group">
                 <div>
-                    <label for="email">Email</label>
-                    <input type="email" id="email" class="validate-field" name="email" placeholder="Enter your email" required />
+                    <label for="email">{{ __('register.email') }}</label>
+                    <input type="email" id="email" class="validate-field" name="email" placeholder="{{ __('register.email_placeholder') }}" required />
                     <div class="error-msg" id="email_err"></div>
                 </div>
                 <div>
-                    <label for="phone_number">Phone Number</label>
-                    <input type="tel" id="phone_number" class="validate-field" name="phone_number" placeholder="Enter your phone number" required />
+                    <label for="phone_number">{{ __('register.phone_number') }}</label>
+                    <input type="tel" id="phone_number" class="validate-field" name="phone_number" placeholder="{{ __('register.phone_number_placeholder') }}" required />
                     <div class="error-msg" id="phone_number_err"></div>
                 </div>
             </div>
 
             <div class="input-group">
                 <div>
-                    <label for="whatsapp_phone_number">WhatsApp Number</label>
-                    <input type="tel" id="whatsapp_phone_number" name="whatsapp_phone_number" placeholder="Enter your WhatsApp number" required />
-                    <button type="button" class="whatsapp_phone_number-btn" id="validBtn" onclick="checkWhatsApp_phone_number()">Validate</button>
+                    <label for="whatsapp_phone_number">{{ __('register.whatsapp_number') }}</label>
+                    <input type="tel" id="whatsapp_phone_number" name="whatsapp_phone_number" placeholder="{{ __('register.whatsapp_number_placeholder') }}" required />
+                    <button type="button" class="whatsapp_phone_number-btn" id="validBtn" onclick="checkWhatsApp_phone_number()">{{ __('register.validate') }}</button>
                     <div class="error-msg" id="whatsapp_phone_number_err"></div>
                     <div id="whatsapp_phone_number-check-msg"></div>
                 </div>
                 <div>
-                    <label for="address">Address</label>
-                    <input type="text" id="address" name="address" placeholder="Enter your address" required />
+                    <label for="address">{{ __('register.address') }}</label>
+                    <input type="text" id="address" name="address" placeholder="{{ __('register.address_placeholder') }}" required />
                     <div class="error-msg" id="address_err"></div>
                 </div>
             </div>
 
             <div class="input-group">
                 <div>
-                    <label for="password">Password</label>
-                    <input type="password" id="password" name="password" placeholder="Enter your password" required />
+                    <label for="password">{{ __('register.password') }}</label>
+                    <input type="password" id="password" name="password" placeholder="{{ __('register.password_placeholder') }}" required />
                     <small style="font-size: 10px; color: rgba(0, 0, 0, 0.5); display: block; margin-top: 3px; text-align: left;">
-                        Password must be at least 8 characters with at least 1 number and 1 special character, and must not contain any white spaces
+                        {{ __('register.password_note') }}
                     </small>
                     <div class="error-msg" id="password_err"></div>
                 </div>
                 <div>
-                    <label for="confirm_password">Confirm Password</label>
-                    <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm your password" required />
+                    <label for="confirm_password">{{ __('register.confirm_password') }}</label>
+                    <input type="password" id="confirm_password" name="confirm_password" placeholder="{{ __('register.confirm_password_placeholder') }}" required />
                     <div class="error-msg" id="confirm_password_err"></div>
                 </div>
             </div>
 
             <div class="input-group">
                 <div>
-                    <label for="user_image">Upload Image</label>
+                    <label for="user_image">{{ __('register.upload_image') }}</label>
                     <input type="file" id="user_image" name="user_image" accept="image/*" required />
                     <div class="error-msg" id="user_image_err"></div>
                 </div>
             </div>
 
-            <button type="submit" id="register-btn" class="btn">Register</button>
+            <button type="submit" id="register-btn" class="btn">{{ __('register.register_btn') }}</button>
         </form>
     </div>
+
 
     @include('partials.footer')
 

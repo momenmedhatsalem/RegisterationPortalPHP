@@ -113,21 +113,55 @@
     <div class="logo-container">
         <img src="{{ asset('images/assets/Cairo_University_crest.svg') }}" alt="University Logo" class="logo">
     </div>
-    <nav class="nav-links">
-        <a href="#">Home</a>
-        <div class="dropdown">
-            <a href="#">Our Services</a>
-            <div class="dropdown-content">
-                <a href="#">Service 1</a>
-                <a href="#">Service 2</a>
-                <a href="#">Service 3</a>
+    @php
+        App::setLocale(session('locale') ?? 'en');
+    @endphp
+    <nav class="nav-links {{ App::getLocale() == 'ar' ? 'rtl' : '' }}">
+        @if(App::getLocale() == 'ar')
+            <a href="#">{{ __('navbar.about') }}</a>
+            <a href="#">{{ __('navbar.contact') }}</a>
+            <div class="dropdown">
+                <a href="#">{{ __('navbar.services') }}</a>
+                <div class="dropdown-content">
+                    <a href="#">{{ __('navbar.service3') }}</a>
+                    <a href="#">{{ __('navbar.service2') }}</a>
+                    <a href="#">{{ __('navbar.service1') }}</a>
+                </div>
             </div>
-        </div>
-        
-        <a href="#">Contact us</a>
-        <a href="#">About us</a>
+            <a href="#">{{ __('navbar.home') }}</a>
+        @else
+            <a href="#">{{ __('navbar.home') }}</a>
+            <div class="dropdown">
+                <a href="#">{{ __('navbar.services') }}</a>
+                <div class="dropdown-content">
+                    <a href="#">{{ __('navbar.service1') }}</a>
+                    <a href="#">{{ __('navbar.service2') }}</a>
+                    <a href="#">{{ __('navbar.service3') }}</a>
+                </div>
+            </div>
+            <a href="#">{{ __('navbar.contact') }}</a>
+            <a href="#">{{ __('navbar.about') }}</a>
+        @endif
     </nav>
+
+
+    <div style="display: flex; gap: 10px; align-items: center;">
+    <!-- Show the link based on session lang -->
+    @if(session('locale') == 'ar')
+        <a href="{{ url('/setlocale/en') }}" title="Switch to English">
+            EN
+        </a>
+    @else
+        <a href="{{ url('/setlocale/ar') }}" title="التبديل إلى العربية">
+            AR
+        </a>
+    @endif
+    </div>
+
+
 </header>
+
+
 
 <script>
     let ticking = false;

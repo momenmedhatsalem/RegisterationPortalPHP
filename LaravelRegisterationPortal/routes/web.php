@@ -9,3 +9,14 @@ Route::get('/', function () {
 });
 
 Route::post('/submit', [FormUserController::class, 'store']);
+
+
+// routes/web.php
+Route::get('/setlocale/{locale}', function ($locale) {
+    if (in_array($locale, ['en', 'ar'])) {
+        session(['locale' => $locale]);
+    }
+    return redirect()->back();
+});
+
+

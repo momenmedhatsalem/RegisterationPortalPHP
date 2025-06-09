@@ -10,7 +10,7 @@ Route::get('/', function () {
 
 Route::post('/submit', [FormUserController::class, 'store']);
 Route::post('/check-whatsapp', [FormUserController::class, 'ajaxCheckWhatsApp'])->name('check.whatsapp');
-
+Route::get('/check-whatsapp', [FormUserController::class, 'ajaxCheckWhatsApp'])->name('check.whatsapp');
 
 
 // routes/web.php

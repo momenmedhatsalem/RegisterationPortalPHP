@@ -6,7 +6,7 @@
     <title>Registration</title>
     <style>
     :root {
-      --text-align: {{ in_array(app()->getLocale(), ['ar', 'he', 'fa']) ? 'right' : 'left' }};
+      --text-align: {{ in_array(session('locale'), ['ar', 'he', 'fa']) ? 'right' : 'left' }};
     }
     </style>
     <link rel="stylesheet" href="{{ asset('css/style.css') }}" />

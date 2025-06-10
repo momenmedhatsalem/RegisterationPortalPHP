@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use App\Services\FormUserService;
 use App\Services\WhatsAppService;
 use Illuminate\Http\Request;
-
+use App\Mail\NewUserRegistered; 
+use Illuminate\Support\Facades\Mail;
 class FormUserController extends Controller
 {
     protected $whatsAppService;
@@ -24,6 +25,16 @@ class FormUserController extends Controller
         $this->validateWhatsAppNumberAPI($request->whatsapp_phone_number);
 
         FormUserService::formatAndStoreFormData($request);
+       $user = [  
+            'name' => $request->name,
+            'username'=> $request->username , 
+            'email'=> $request->email,
+            'phone_number'=> $request->phone_number,
+            'whatsapp_number'=> $request->whatsapp_phone_number
+
+            ];
+
+Mail::to('marimesm2@gmail.com')->send(new NewUserRegistered($user));
 
         return response()->json([
             'status' => 'success',

@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Helpers\DataFormatter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -9,6 +9,7 @@ class UniquenessController extends Controller
 {
   public function checkUnique(Request $request)
 {
+
     $field = $request->input('field');
     $value = $request->input('value');
 

@@ -13,6 +13,13 @@ class UniquenessController extends Controller
     $field = $request->input('field');
     $value = $request->input('value');
 
+    //normalize the data as it exists in the DB
+    $value = DataFormatter::clean($value);
+    if (preg_match('/phone_number$/', $field))
+    {
+        $value = DataFormatter::formatPhoneNumber($value);
+    }
+
     $allowedFields = [
         'username' => 'username',
         'email' => 'email',

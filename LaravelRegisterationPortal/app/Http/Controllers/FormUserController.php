@@ -22,7 +22,7 @@ class FormUserController extends Controller
         FormUserService::cleanFormData($request);
         FormUserService::validateFormData($request);
 
-        //$this->validateWhatsAppNumberAPI($request->whatsapp_phone_number);
+       $this->validateWhatsAppNumberAPI($request->whatsapp_phone_number);
 
         FormUserService::formatAndStoreFormData($request);
        $user = [  
@@ -36,10 +36,13 @@ class FormUserController extends Controller
 
 Mail::to('marimesm2@gmail.com')->send(new NewUserRegistered($user));
 
+return redirect('/')->with('success', 'You are successfully registered!');
         return response()->json([
             'status' => 'success',
             'message' => 'You are successfully registered!'
-        ]);    }
+        ]);  
+    
+    }
 
     public function ajaxCheckWhatsApp(Request $request)
     {

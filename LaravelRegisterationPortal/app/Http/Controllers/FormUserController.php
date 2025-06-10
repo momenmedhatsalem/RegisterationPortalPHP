@@ -25,8 +25,10 @@ class FormUserController extends Controller
 
         FormUserService::formatAndStoreFormData($request);
 
-        return redirect('/')->with('success', 'You are successfully registered!');
-    }
+        return response()->json([
+            'status' => 'success',
+            'message' => 'You are successfully registered!'
+        ]);    }
 
     public function ajaxCheckWhatsApp(Request $request)
     {

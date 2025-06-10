@@ -33,20 +33,23 @@
                 </div>
                 <div>
                     <label for="username">{{ __('register.username') }}</label>
-                    <input type="text" id="username" class="validate-field" name="username" placeholder="{{ __('register.username_placeholder') }}" required oninput="check_uniqueness('username')" />
-                    <div class="error-msg" id="username_err"></div>
+                    <input type="text" id="username" class="validate-field" name="username" placeholder="{{ __('register.username_placeholder') }}" required oninput="check_unique('username')" />
+                    <span id="username_check_msg" class="text-sm"></span>
+                    <div class="error-msg" id="user_name_err"></div>
                 </div>
             </div>
 
             <div class="input-group">
                 <div>
                     <label for="email">{{ __('register.email') }}</label>
-                    <input type="email" id="email" class="validate-field" name="email" placeholder="{{ __('register.email_placeholder') }}" required />
+                    <input type="email" id="email" class="validate-field" name="email" placeholder="{{ __('register.email_placeholder') }}" required oninput="check_unique('email')" />
+                      <span id="email_check_msg" class="text-sm"></span>
                     <div class="error-msg" id="email_err"></div>
                 </div>
                 <div>
                     <label for="phone_number">{{ __('register.phone_number') }}</label>
-                    <input type="tel" id="phone_number" class="validate-field" name="phone_number" placeholder="{{ __('register.phone_number_placeholder') }}" required />
+                    <input type="tel" id="phone_number" class="validate-field" name="phone_number" placeholder="{{ __('register.phone_number_placeholder') }}" required oninput="check_unique('phone_number')"/>
+                        <span id="phone_number_check_msg" class="text-sm"></span>
                     <div class="error-msg" id="phone_number_err"></div>
                 </div>
             </div>
@@ -58,7 +61,7 @@
                     <small style="font-size: 10px; color: rgba(0, 0, 0, 0.5); display: block; margin-top: 3px; text-align: left;">
                         Please start with country code, e.g. +1 for USA, +20 for EG.
                     </small>
-                    <button type="button" class="whatsapp_phone_number-btn" id="validBtn" onclick="checkWhatsApp()">{{ __('register.validate') }}</button>
+                    <button type="button" class="whatsapp_phone_number-btn" id="validBtn">{{ __('register.validate') }}</button>
                     <div class="error-msg" id="whatsapp_phone_number_err"></div>
                     <div id="whatsapp_phone_number-check-msg"></div>
                 </div>
@@ -103,51 +106,107 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script>
-    
-    $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
+
+   // Track validation state
+const uniqueFieldStatus = {
+    username: false,
+    email: false,
+    phone_number: false
+};
+
+$.ajaxSetup({
+    headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
+});
+
+function check_unique(fieldId) {
+    const fieldValue = $("#" + fieldId).val();
+    const msgSpan = $("#" + fieldId + "_check_msg");
+
+    if (fieldValue.trim() === "") {
+        msgSpan.text("").css("color", "");
+        uniqueFieldStatus[fieldId] = false;
+        return;
+    }
+
+    $.post('/check-unique', {
+        field: fieldId,
+        value: fieldValue
+    }, function(response) {
+        msgSpan.addClass("text-sm").css({
+            "font-size": "12px",
+            "margin-top": "2px"
         });
 
-        function submitForm(event) {
-            event.preventDefault();
-
-            $("#success-msg").hide();
-            $(".error-msg").hide().html("");
-
-            var formData = new FormData($("#registrationForm")[0]);
-
-            $.ajax({
-                url: "/submit",
-                type: "POST",
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function(response) {
-                    if(response.status === "success"){
-                        $("#success-msg").show();
-                        $("#registrationForm")[0].reset();
-                        window.scrollTo(0,0);
-                    } else {
-                        // Show validation errors
-                        $(".error-msg").each(function() {
-                            var id = $(this).attr("id").replace("_err", "");
-                            if(response[id]){
-                                $(this).show().html(response[id]);
-                            }
-                        });
-                    }
-                },
-                error: function(xhr){
-                    alert('An error occurred. Please try again.');
-                }
-            });
+        if (response.available) {
+            msgSpan.text(fieldId + " is available").css("color", "green");
+            uniqueFieldStatus[fieldId] = true;
+        } else {
+            msgSpan.text(fieldId + " is already taken").css("color", "red");
+            uniqueFieldStatus[fieldId] = false;
         }
+    });
+}
 
-        $("#registrationForm").on("submit", submitForm);
+function submitForm(event) {
+    event.preventDefault();
 
-        // Password validation and confirm password check
+    // Check if all unique fields are valid (green)
+    for (const field in uniqueFieldStatus) {
+        if (!uniqueFieldStatus[field]) {
+            alert(`Please make sure the ${field} is available before submitting.`);
+            return;
+        }
+    }
+
+    $("#success-msg").hide();
+    $(".error-msg").hide().html("");
+
+    const formData = new FormData($("#registrationForm")[0]);
+
+    $.ajax({
+        url: "/submit",
+        type: "POST",
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+            if (response.status === "success") {
+                $("#success-msg").show();
+                $("#registrationForm")[0].reset();
+                window.scrollTo(0, 0);
+            } else {
+                $(".error-msg").each(function () {
+                    const id = $(this).attr("id").replace("_err", "");
+                    if (response[id]) {
+                        $(this).show().html(response[id]);
+                    }
+                });
+            }
+        },
+        error: function(xhr) {
+            if (xhr.status === 422) {
+                const errors = xhr.responseJSON.errors;
+                if (errors) {
+                    Object.keys(errors).forEach(function(field) {
+                        const errorField = $("#" + field + "_err");
+                        if (errorField.length) {
+                            errorField.show().html(errors[field][0]);
+                        }
+                    });
+                }
+            } else {
+                console.error("Error:", xhr.status, xhr.responseText);
+                alert('An error occurred. Please try again.');
+            }
+        }
+    });
+}
+
+$("#registrationForm").on("submit", submitForm);
+
+ // Password validation and confirm password check
         $(document).ready(function(){
             const passwordInput = $("#password");
             const confirmPasswordInput = $("#confirm_password");
@@ -193,7 +252,7 @@
                 }
             });
         });
-        //Whatsapp Number Validation
+ //Whatsapp Number Validation
          function checkWhatsApp() {
             const number = document.getElementById('whatsapp_phone_number').value;
             const msgDiv = document.getElementById('whatsapp_phone_number-check-msg');
@@ -236,6 +295,7 @@
                 }
             });
         }
+
     </script>
 </body>
 </html>

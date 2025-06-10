@@ -24,7 +24,7 @@ class UniquenessController extends Controller
 
     $column = $allowedFields[$field];
 
-    $exists = \DB::table('form_users')->where($column, $value)->exists();
+    $exists = DB::table('form_users')->where($column, $value)->exists();
 
     return response()->json([
         'available' => !$exists

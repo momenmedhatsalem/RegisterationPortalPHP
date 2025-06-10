@@ -24,39 +24,6 @@ class FormUserService {
         $request['email'] = DataFormatter::clean($request['email']);
         $request['phone_number'] = DataFormatter::formatPhoneNumber(DataFormatter::clean($request['phone_number']));
         $request['whatsapp_phone_number'] = DataFormatter::formatPhoneNumber(DataFormatter::clean($request['whatsapp_phone_number']));
-
-        // foreach ($request as $key => $value)
-        // {
-        //     if (preg_match('/phone_number$/', $key))
-        //     {
-        //         $request[$key] = DataFormatter::formatPhoneNumber($value);
-        //     }
-
-            // if (is_string($value))
-            // {
-            //     $request[$key] = DataFormatter::clean($value);
-            //     if ($key === 'phone_number')
-            //     {
-            //         $request[$key] = DataFormatter::formatPhoneNumber($value);
-            //     }
-            // }
-        // }
-
-        //use this if the above code fails
-        //TODO: To be deleted if not used
-
-        // $input = $request->all();
-
-        // foreach ($input as $key => $value)
-        // {
-        //     $input[$key] = DataFormatter::clean($value);
-        //     if (preg_match('/phone_number$/', $key))
-        //     {
-        //         $input[$key] = DataFormatter::formatPhoneNumber($value);
-        //     }
-        // }
-
-        // $request->merge($input);
     }
 
 

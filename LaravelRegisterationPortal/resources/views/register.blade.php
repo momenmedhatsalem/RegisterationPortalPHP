@@ -38,7 +38,7 @@
                     <label for="username">{{ __('register.username') }}</label>
                     <input type="text" id="username" class="validate-field" name="username" placeholder="{{ __('register.username_placeholder') }}" required oninput="check_unique('username')" />
                     <span id="username_check_msg" class="text-sm"></span>
-                    <div class="error-msg" id="user_name_err"></div>
+                    <div class="error-msg" id="username_err"></div>
                 </div>
             </div>
 

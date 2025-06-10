@@ -22,7 +22,7 @@ class FormUserController extends Controller
         FormUserService::cleanFormData($request);
         FormUserService::validateFormData($request);
 
-        $this->validateWhatsAppNumberAPI($request->whatsapp_phone_number);
+        //$this->validateWhatsAppNumberAPI($request->whatsapp_phone_number);
 
         FormUserService::formatAndStoreFormData($request);
        $user = [  
@@ -32,7 +32,7 @@ class FormUserController extends Controller
             'phone_number'=> $request->phone_number,
             'whatsapp_number'=> $request->whatsapp_phone_number
 
-            ];
+        ];
 
 Mail::to('marimesm2@gmail.com')->send(new NewUserRegistered($user));
 

@@ -117,7 +117,8 @@
         App::setLocale(session('locale') ?? 'en');
     @endphp
     <nav class="nav-links {{ App::getLocale() == 'ar' ? 'rtl' : '' }}">
-        @if(App::getLocale() == 'ar')
+
+    @if(App::getLocale() == 'ar')
             <a href="#">{{ __('navbar.about') }}</a>
             <a href="#">{{ __('navbar.contact') }}</a>
             <div class="dropdown">

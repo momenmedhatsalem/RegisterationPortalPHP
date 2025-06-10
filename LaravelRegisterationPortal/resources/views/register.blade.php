@@ -64,7 +64,7 @@
                     <small style="font-size: 10px; color: rgba(0, 0, 0, 0.5); display: block; margin-top: 3px; text-align: left;">
                         {{ __('register.whatsapp_number_note') }}
                     </small>
-                 <button type="button" class="whatsapp_phone_number-btn" id="validBtn" onclick="checkWhatsApp()">{{ __('register.validate') }}</button>
+             <button type="button" class="whatsapp_phone_number-btn" id="validBtn" onclick="checkWhatsApp()">{{ __('register.validate') }}</button>
                     <div class="error-msg" id="whatsapp_phone_number_err"></div>
                     <div id="whatsapp_phone_number-check-msg"></div>
                 </div>
